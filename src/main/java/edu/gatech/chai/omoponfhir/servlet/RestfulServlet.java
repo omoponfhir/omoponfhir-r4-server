@@ -18,8 +18,8 @@ package edu.gatech.chai.omoponfhir.servlet;
 import java.util.*;
 
 import edu.gatech.chai.omoponfhir.security.OIDCInterceptor;
-import edu.gatech.chai.omoponfhir.omopv5.stu3.provider.*;
-import edu.gatech.chai.omoponfhir.stu3.security.SMARTonFHIRConformanceStatement;
+import edu.gatech.chai.omoponfhir.omopv5.r4.provider.*;
+import edu.gatech.chai.omoponfhir.r4.security.SMARTonFHIRConformanceStatement;
 
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.cors.CorsConfiguration;
@@ -57,7 +57,7 @@ public class RestfulServlet extends RestfulServer {
 	@Override
 	public void initialize() {
 		// Set server name
-		setServerName("OMOPonFHIR (OMOPv5.3.1/FHIR STU3)");
+		setServerName("OMOPonFHIR for FHIR R4 and OMOPv5");
 
 		// If we have system environment variable to hardcode the base URL, do it now.
 		String serverBaseUrl = System.getenv("SERVERBASE_URL");
