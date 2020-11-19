@@ -14,7 +14,7 @@
 		this for your own projects. One thing to note though: -->
 
 	<groupId>edu.gatech.chai</groupId>
-	<artifactId>omoponfhir-stu3-server</artifactId>
+	<artifactId>omoponfhir-r4-server</artifactId>
 	<packaging>war</packaging>
 	<version>1.2.0</version>
 
@@ -97,7 +97,7 @@
 		<!-- At least one "structures" JAR must also be included -->
 		<dependency>
 			<groupId>ca.uhn.hapi.fhir</groupId>
-			<artifactId>hapi-fhir-structures-dstu3</artifactId>
+			<artifactId>hapi-fhir-structures-r4</artifactId>
 			<version>${hapi_stable_version}</version>
 		</dependency>
 
@@ -360,7 +360,7 @@
 
 		<dependency>
 			<groupId>edu.gatech.chai</groupId>
-			<artifactId>omoponfhir-omopv5-stu3-mapping</artifactId>
+			<artifactId>omoponfhir-omopv5-r4-mapping</artifactId>
 			<version>${omoponfhir_mapping_version}</version>
 		</dependency>
 
@@ -479,7 +479,7 @@
 	<build>
 
 		<!-- Tells Maven to name the generated WAR file as restful-server-example.war -->
-		<finalName>omoponfhir-stu3-server</finalName>
+		<finalName>omoponfhir-r4-server</finalName>
 
 		<!-- The following is not required for the application to build, but allows 
 			you to test it by issuing "mvn jetty:run" from the command line. -->
