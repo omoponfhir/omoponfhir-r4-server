@@ -360,7 +360,7 @@
 
 		<dependency>
 			<groupId>edu.gatech.chai</groupId>
-			<artifactId>omoponfhir-omopv5-r4-mapping</artifactId>
+			<artifactId>omoponfhir-omopv6-r4-mapping</artifactId>
 			<version>${omoponfhir_mapping_version}</version>
 		</dependency>
 

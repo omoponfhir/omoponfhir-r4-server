@@ -25,7 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.hl7.fhir.r4.hapi.rest.server.ServerCapabilityStatementProvider;
 import org.hl7.fhir.r4.model.CapabilityStatement;
 import org.hl7.fhir.r4.model.CapabilityStatement.CapabilityStatementRestComponent;
-import org.hl7.fhir.dr4.model.CapabilityStatement.CapabilityStatementRestResourceComponent;
+import org.hl7.fhir.r4.model.CapabilityStatement.CapabilityStatementRestResourceComponent;
 import org.hl7.fhir.r4.model.CapabilityStatement.CapabilityStatementRestSecurityComponent;
 import org.hl7.fhir.r4.model.CodeableConcept;
 import org.hl7.fhir.r4.model.Coding;
@@ -36,7 +36,7 @@ import org.hl7.fhir.r4.model.UriType;
 import ca.uhn.fhir.rest.api.server.RequestDetails;
 import ca.uhn.fhir.rest.server.RestfulServer;
 import ca.uhn.fhir.util.ExtensionConstants;
-import edu.gatech.chai.omoponfhir.omopv5.r4.utilities.ExtensionUtil;
+import edu.gatech.chai.omoponfhir.omopv6.r4.utilities.ExtensionUtil;
 
 /**
  * @author mc142local
