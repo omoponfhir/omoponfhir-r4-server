@@ -16,7 +16,7 @@
 	<groupId>edu.gatech.chai</groupId>
 	<artifactId>omoponfhir-r4-server</artifactId>
 	<packaging>war</packaging>
-	<version>1.2.0</version>
+	<version>1.2.1</version>
 
 	<name>OMOPonFHIR RESTful Server</name>
 
@@ -33,7 +33,7 @@
 	<properties>
 		<hapi_stable_version>4.2.0</hapi_stable_version>
 		<hapi_current_version>4.2.0-SNAPSHOT</hapi_current_version>
-		<omoponfhir_mapping_version>1.2.0</omoponfhir_mapping_version>
+		<omoponfhir_mapping_version>1.2.1</omoponfhir_mapping_version>
 
 		<!-- configure timestamp in MANIFEST.MF for maven-war-provider -->
 		<maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ss'Z'</maven.build.timestamp.format>
@@ -360,7 +360,7 @@
 
 		<dependency>
 			<groupId>edu.gatech.chai</groupId>
-			<artifactId>omoponfhir-omopv5-r4-mapping</artifactId>
+			<artifactId>omoponfhir-omopv6-r4-mapping</artifactId>
 			<version>${omoponfhir_mapping_version}</version>
 		</dependency>
 

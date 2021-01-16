@@ -18,13 +18,13 @@ package edu.gatech.chai.omoponfhir.servlet;
 import java.util.*;
 
 import edu.gatech.chai.omoponfhir.security.OIDCInterceptor;
-import edu.gatech.chai.omoponfhir.omopv5.r4.provider.*;
+import edu.gatech.chai.omoponfhir.omopv6.r4.provider.*;
+import edu.gatech.chai.omoponfhir.omopv6.r4.utilities.StaticValues;
 import edu.gatech.chai.omoponfhir.r4.security.SMARTonFHIRConformanceStatement;
 
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.cors.CorsConfiguration;
 
-import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.narrative.DefaultThymeleafNarrativeGenerator;
 import ca.uhn.fhir.narrative.INarrativeGenerator;
 import ca.uhn.fhir.rest.api.EncodingEnum;
@@ -43,12 +43,12 @@ public class RestfulServlet extends RestfulServer {
 
 	private static final long serialVersionUID = 1L;
 	private WebApplicationContext myAppCtx;
-
+	
 	/**
 	 * Constructor
 	 */
 	public RestfulServlet() {
-		super(FhirContext.forDstu3());
+		super(StaticValues.myFhirContext);
 	}
 
 	/**
@@ -57,7 +57,7 @@ public class RestfulServlet extends RestfulServer {
 	@Override
 	public void initialize() {
 		// Set server name
-		setServerName("OMOPonFHIR for FHIR R4 and OMOPv5");
+		setServerName("OMOPonFHIR for FHIR R4 and OMOPv6");
 
 		// If we have system environment variable to hardcode the base URL, do it now.
 		String serverBaseUrl = System.getenv("SERVERBASE_URL");
@@ -127,8 +127,10 @@ public class RestfulServlet extends RestfulServer {
 		providers.add(documentReferenceResourceProvider);
 
 		ConceptMapResourceProvider conceptMapResourceProvider = new ConceptMapResourceProvider();
-		conceptMapResourceProvider.setFhirContext(getFhirContext());
 		providers.add(conceptMapResourceProvider);
+
+		ImmunizationResourceProvider immunizationesourceProvider = new ImmunizationResourceProvider();
+		providers.add(immunizationesourceProvider);
 
 		setResourceProviders(providers);
 
@@ -148,7 +150,7 @@ public class RestfulServlet extends RestfulServer {
 
 		// CapabilityStatement must be loaded after providers.
 		SMARTonFHIRConformanceStatement capbilityProvider = new SMARTonFHIRConformanceStatement(this);
-		capbilityProvider.setPublisher("Georgia Tech - I3L");
+		capbilityProvider.setPublisher("Georgia Tech - CHAI");
 
 		if (authServerUrl != null && !authServerUrl.isEmpty())
 			capbilityProvider.setAuthServerUrl(authServerUrl);

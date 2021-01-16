@@ -32,14 +32,14 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-//import edu.gatech.chai.omopv5.jpa.service.CareSiteService;
-//import edu.gatech.chai.omopv5.jpa.service.CareSiteServiceImp;
+//import edu.gatech.chai.omopv6.jpa.service.CareSiteService;
+//import edu.gatech.chai.omopv6.jpa.service.CareSiteServiceImp;
 
 @Configuration
 @EnableScheduling
 @EnableTransactionManagement
-@ComponentScans(value = { @ComponentScan("edu.gatech.chai.omopv5.jpa.dao"),
-		@ComponentScan("edu.gatech.chai.omopv5.dba.service"),
+@ComponentScans(value = { @ComponentScan("edu.gatech.chai.omopv6.jpa.dao"),
+		@ComponentScan("edu.gatech.chai.omopv6.dba.service"),
 		@ComponentScan("edu.gatech.chai.omoponfhir.smart.dao"),
 		@ComponentScan("edu.gatech.chai.omoponfhir.local.task")})
 @ImportResource({
@@ -64,7 +64,7 @@ public class FhirServerConfig {
 		retVal.setPersistenceUnitName("OMOPonFHIRv1");
 //		retVal.setDataSource(dataSource());
 		retVal.setDataSource(dataSource);
-		retVal.setPackagesToScan("edu.gatech.chai.omopv5.model.entity");
+		retVal.setPackagesToScan("edu.gatech.chai.omopv6.model.entity");
 		retVal.setPersistenceProvider(new HibernatePersistenceProvider());
 		retVal.setJpaProperties(jpaProperties());
 		return retVal;
@@ -73,7 +73,7 @@ public class FhirServerConfig {
 	private Properties jpaProperties() {
 		Properties extraProperties = new Properties();
 		extraProperties.put("hibernate.dialect", org.hibernate.dialect.PostgreSQL94Dialect.class.getName());
-//		extraProperties.put("hibernate.dialect", edu.gatech.chai.omopv5.jpa.enity.noomop.OmopPostgreSQLDialect.class.getName());
+//		extraProperties.put("hibernate.dialect", edu.gatech.chai.omopv6.jpa.enity.noomop.OmopPostgreSQLDialect.class.getName());
 		extraProperties.put("hibernate.format_sql", "true");
 		extraProperties.put("hibernate.show_sql", "false");
 		extraProperties.put("hibernate.hbm2ddl.auto", "update");
