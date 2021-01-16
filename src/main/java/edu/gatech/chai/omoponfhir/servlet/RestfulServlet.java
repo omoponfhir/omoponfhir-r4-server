@@ -127,8 +127,10 @@ public class RestfulServlet extends RestfulServer {
 		providers.add(documentReferenceResourceProvider);
 
 		ConceptMapResourceProvider conceptMapResourceProvider = new ConceptMapResourceProvider();
-		conceptMapResourceProvider.setFhirContext(getFhirContext());
 		providers.add(conceptMapResourceProvider);
+
+		ImmunizationResourceProvider immunizationesourceProvider = new ImmunizationResourceProvider();
+		providers.add(immunizationesourceProvider);
 
 		setResourceProviders(providers);
 
@@ -148,7 +150,7 @@ public class RestfulServlet extends RestfulServer {
 
 		// CapabilityStatement must be loaded after providers.
 		SMARTonFHIRConformanceStatement capbilityProvider = new SMARTonFHIRConformanceStatement(this);
-		capbilityProvider.setPublisher("Georgia Tech - I3L");
+		capbilityProvider.setPublisher("Georgia Tech - CHAI");
 
 		if (authServerUrl != null && !authServerUrl.isEmpty())
 			capbilityProvider.setAuthServerUrl(authServerUrl);
