@@ -306,9 +306,16 @@ public class SmartAuthServicesController {
 		String[] scopeEntries = scope.split(" ");
 		String myScope = smartApp.getScope();
 		for (String scopeEntry : scopeEntries) {
-			if (!(myScope.contains("user/*.*") && scopeEntry.startsWith("user/"))
- 					&& !(myScope.contains("patient/*.*") && scopeEntry.startsWith("patient/"))
- 					&& !myScope.contains(scopeEntry)) {
+			if (!(myScope.contains("user/*.*") && scopeEntry.matches("user\\/.+\\.(read|write)")) &&
+				!(myScope.contains("patient/*.*") && scopeEntry.matches("patient\\/.+\\.(read|write)")) &&
+				!(myScope.contains("system/*.*") && scopeEntry.matches("system\\/.+\\.(read|write)")) &&
+				!(myScope.contains("user/*.read") && scopeEntry.matches("user\\/.+\\.read")) &&
+				!(myScope.contains("user/*.write") && scopeEntry.matches("user\\/.+\\.write")) &&
+				!(myScope.contains("patient/*.read") && scopeEntry.matches("patient\\/.+\\.read")) &&
+				!(myScope.contains("patient/*.write") && scopeEntry.matches("patient\\/.+\\.write")) &&
+				!(myScope.contains("system/*.read") && scopeEntry.matches("system\\/.+\\.read")) &&
+				!(myScope.contains("system/*.write") && scopeEntry.matches("system\\/.+\\.write")) &&
+ 				!myScope.contains(scopeEntry)) {
 				// Out of scope
 				try {
 					logger.info("scope, " + scopeEntry + ", is not valid");
