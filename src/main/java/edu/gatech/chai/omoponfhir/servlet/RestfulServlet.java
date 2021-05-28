@@ -57,7 +57,7 @@ public class RestfulServlet extends RestfulServer {
 	@Override
 	public void initialize() {
 		// Set server name
-		setServerName("OMOPonFHIR for FHIR R4 and OMOPv6");
+		setServerName("OMOPonFHIR for FHIR R4 and OMOPv5.3");
 
 		// If we have system environment variable to hardcode the base URL, do it now.
 		String serverBaseUrl = System.getenv("SERVERBASE_URL");
@@ -131,6 +131,9 @@ public class RestfulServlet extends RestfulServer {
 
 		ImmunizationResourceProvider immunizationesourceProvider = new ImmunizationResourceProvider();
 		providers.add(immunizationesourceProvider);
+
+		AllergyIntoleranceResourceProvider allergyIntoleranceResourceProvider = new AllergyIntoleranceResourceProvider();
+		providers.add(allergyIntoleranceResourceProvider);
 
 		setResourceProviders(providers);
 
