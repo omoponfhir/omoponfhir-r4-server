@@ -1,2 +1,2 @@
 # omoponfhir-r4-server
-OMOPv6.0 on FHIR R4
+For OMOPv5.3 on FHIR R4 mapping. 
