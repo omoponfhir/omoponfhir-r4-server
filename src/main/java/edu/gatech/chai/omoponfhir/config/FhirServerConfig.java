@@ -26,13 +26,13 @@ import org.springframework.context.annotation.ImportResource;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import edu.gatech.chai.omopv5.jpa.dao.DatabaseConfiguration;
-import edu.gatech.chai.omopv5.jpa.dao.DatabaseConfigurationImpl;
+import edu.gatech.chai.omopv5.dba.dao.DatabaseConfiguration;
+import edu.gatech.chai.omopv5.dba.dao.DatabaseConfigurationImpl;
 
 @Configuration
 @EnableScheduling
 @EnableTransactionManagement
-@ComponentScans(value = { @ComponentScan("edu.gatech.chai.omopv5.jpa.dao"),
+@ComponentScans(value = { @ComponentScan("edu.gatech.chai.omopv5.dba.dao"),
 		@ComponentScan("edu.gatech.chai.omopv5.dba.service"),
 		@ComponentScan("edu.gatech.chai.omoponfhir.smart.dao"),
 		@ComponentScan("edu.gatech.chai.omoponfhir.local.task")})

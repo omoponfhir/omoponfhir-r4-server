@@ -16,7 +16,7 @@
 	<groupId>edu.gatech.chai</groupId>
 	<artifactId>omoponfhir-r4-server</artifactId>
 	<packaging>war</packaging>
-	<version>1.2.1</version>
+	<version>1.2.2</version>
 
 	<name>OMOPonFHIR RESTful Server</name>
 
