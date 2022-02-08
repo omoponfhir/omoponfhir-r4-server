@@ -16,7 +16,7 @@
 	<groupId>edu.gatech.chai</groupId>
 	<artifactId>omoponfhir-r4-server</artifactId>
 	<packaging>war</packaging>
-	<version>1.2.1</version>
+	<version>1.2.2</version>
 
 	<name>OMOPonFHIR RESTful Server</name>
 
@@ -31,9 +31,8 @@
 	</repositories>
 
 	<properties>
-		<hapi_stable_version>4.2.0</hapi_stable_version>
-		<hapi_current_version>4.2.0-SNAPSHOT</hapi_current_version>
-		<omoponfhir_mapping_version>1.2.2</omoponfhir_mapping_version>
+		<hapi_stable_version>5.6.2</hapi_stable_version>
+		<omoponfhir_mapping_version>1.2.3</omoponfhir_mapping_version>
 
 		<!-- configure timestamp in MANIFEST.MF for maven-war-provider -->
 		<maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ss'Z'</maven.build.timestamp.format>
@@ -45,7 +44,7 @@
 		<jersey_version>2.25.1</jersey_version>
 		<jetty_version>9.4.35.v20201120</jetty_version>
 
-		<hibernate_version>5.4.21.Final</hibernate_version>
+		<hibernate_version>5.6.5.Final</hibernate_version>
 		<hibernate_validator_version>6.1.5.Final</hibernate_validator_version>
 		<!-- Update lucene version when you update hibernate-search version -->
 		<hibernate_search_version>5.11.5.Final</hibernate_search_version>
@@ -59,11 +58,11 @@
 		<phloc_schematron_version>5.2.0</phloc_schematron_version>
 		<phloc_commons_version>9.3.8</phloc_commons_version>
 
-		<spring_version>5.2.4.RELEASE</spring_version>
+		<spring_version>5.3.14</spring_version>
 		<spring_data_version>2.2.0.RELEASE</spring_data_version>
 		<spring-boot.version>2.2.0.RELEASE</spring-boot.version>
 
-		<thymeleaf-version>3.0.11.RELEASE</thymeleaf-version>
+		<thymeleaf-version>3.1.0.M1</thymeleaf-version>
 
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<ebay_cors_filter_version>1.0.1</ebay_cors_filter_version>
@@ -241,7 +240,7 @@
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-			<version>42.2.6</version>
+			<version>42.3.2</version>
 		</dependency>
 
 		<dependency>
@@ -284,7 +283,7 @@
 		<dependency>
 			<groupId>org.webjars</groupId>
 			<artifactId>bootstrap</artifactId>
-			<version>3.3.7</version>
+			<version>5.1.3</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
@@ -310,23 +309,23 @@
 		<dependency>
 			<groupId>org.webjars</groupId>
 			<artifactId>select2</artifactId>
-			<version>4.0.3</version>
+			<version>4.0.13</version>
 		</dependency>
 		<dependency>
 			<groupId>org.webjars.bower</groupId>
 			<artifactId>jquery</artifactId>
-			<version>3.3.1</version>
+			<version>3.6.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.webjars.bower</groupId>
 			<artifactId>moment</artifactId>
-			<version>2.15.1</version>
+			<version>2.29.1</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.webjars/jquery-ui -->
 		<dependency>
 			<groupId>org.webjars</groupId>
 			<artifactId>jquery-ui</artifactId>
-			<version>1.12.1</version>
+			<version>1.13.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.webjars/jquery-ui-themes -->
@@ -342,13 +341,22 @@
 			<artifactId>webjars-locator</artifactId>
 			<version>0.39</version>
 		</dependency>
-
+		<dependency>
+            <groupId>org.webjars.npm</groupId>
+            <artifactId>popper.js</artifactId>
+            <version>1.16.1</version>
+        </dependency>
+		<dependency>
+            <groupId>org.webjars.npm</groupId>
+            <artifactId>bootstrap</artifactId>
+            <version>4.5.2</version>
+    	</dependency>
 
 		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-			<version>2.10.3</version>
+			<version>2.13.1</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc -->
@@ -390,7 +398,7 @@
 		</dependency>
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
-			<artifactId>jjwt-jackson</artifactId> <!-- or jjwt-gson if Gson is preferred -->
+			<artifactId>jjwt-gson</artifactId> <!-- or jjwt-gson if Gson is preferred -->
 			<version>0.11.1</version>
 			<scope>runtime</scope>
 		</dependency>
@@ -399,7 +407,7 @@
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
-			<version>4.5</version>
+			<version>4.5.13</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/com.github.ben-manes.caffeine/caffeine -->

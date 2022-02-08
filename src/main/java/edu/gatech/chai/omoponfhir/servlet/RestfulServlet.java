@@ -145,22 +145,6 @@ public class RestfulServlet extends RestfulServer {
 
 //		setPlainProviders(plainProviders);
 		registerProviders(plainProviders);
-		/*
-		 * Set conformance provider
-		 */
-		String authServerUrl = System.getenv("SMART_AUTHSERVERURL");
-		String tokenServerUrl = System.getenv("SMART_TOKENSERVERURL");
-
-		// CapabilityStatement must be loaded after providers.
-		SMARTonFHIRConformanceStatement capbilityProvider = new SMARTonFHIRConformanceStatement(this);
-		capbilityProvider.setPublisher("Georgia Tech - CHAI");
-
-		if (authServerUrl != null && !authServerUrl.isEmpty())
-			capbilityProvider.setAuthServerUrl(authServerUrl);
-		if (tokenServerUrl != null && !tokenServerUrl.isEmpty())
-			capbilityProvider.setTokenServerUrl(tokenServerUrl);
-
-		setServerConformanceProvider(capbilityProvider);
 
 		/*
 		 * Add page provider. Use memory based on for now.
