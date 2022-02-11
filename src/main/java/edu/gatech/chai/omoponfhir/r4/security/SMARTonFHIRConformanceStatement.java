@@ -59,7 +59,7 @@ public class SMARTonFHIRConformanceStatement {
 	String authorizeUrlValue = "http://localhost:8080/authorize";
 	String tokenUrlValue = "http://localhost:8080/token";
 
-	public SMARTonFHIRConformanceStatement(RestfulServer theRestfulServer) {
+	public SMARTonFHIRConformanceStatement() {
 		String authorizeUrl = System.getenv("SMART_AUTHSERVERURL");
 		String tokenUrl = System.getenv("SMART_TOKENSERVERURL");
 
@@ -79,7 +79,7 @@ public class SMARTonFHIRConformanceStatement {
 
 		cs
          .getSoftware()
-         .setName("OMOP v5.3.1 on FHIR R4")
+         .setName("OMOP v6 on FHIR R4")
          .setVersion("v1.2.1")
          .setReleaseDateElement(new DateTimeType("2021-09-21"));
 
