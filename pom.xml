@@ -56,7 +56,7 @@
 		<spring_data_version>2.2.0.RELEASE</spring_data_version>
 		<spring-boot.version>2.2.0.RELEASE</spring-boot.version>
 
-		<thymeleaf-version>3.0.11.RELEASE</thymeleaf-version>
+		<thymeleaf-version>3.1.0.M1</thymeleaf-version>
 
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<ebay_cors_filter_version>1.0.1</ebay_cors_filter_version>
@@ -234,7 +234,7 @@
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-			<version>42.2.23.jre7</version>
+			<version>42.3.2</version>
 		</dependency>
 
 		<!-- webjars -->
