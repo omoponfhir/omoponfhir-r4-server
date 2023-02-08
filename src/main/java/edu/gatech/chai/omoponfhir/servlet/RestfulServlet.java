@@ -56,7 +56,12 @@ public class RestfulServlet extends RestfulServer {
 	@Override
 	public void initialize() {
 		// Set server name
-		setServerName("OMOPonFHIR for FHIR R4 and OMOPv5.3.1");
+		String myName = System.getenv("OMOPONFHIR_NAME");
+		if (myName != null && !myName.isBlank()) {
+			setServerName(myName);
+		} else {
+			setServerName("OMOPonFHIR Restful Server");
+		}
 
 		// If we have system environment variable to hardcode the base URL, do it now.
 		String serverBaseUrl = System.getenv("SERVERBASE_URL");
