@@ -249,11 +249,10 @@ public class OIDCInterceptor extends InterceptorAdapter {
 	}
 
 	@Override
-	public void incomingRequestPreHandled(RestOperationTypeEnum theOperation,
-			ActionRequestDetails theProcessedRequest) {
+	public void incomingRequestPreHandled(RestOperationTypeEnum theOperation, RequestDetails requestDetails) {
 		
 		ourLog.debug("Request is parsed. Now in pre handled interceptor");
-		RequestDetails requestDetails = theProcessedRequest.getRequestDetails();
+		// RequestDetails requestDetails = theProcessedRequest.getRequestDetails();
 
 		Authorization myAuth = (Authorization) requestDetails.getAttribute(OIDCInterceptor.authKeyName);
 		if (myAuth != null) {

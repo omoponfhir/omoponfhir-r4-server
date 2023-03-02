@@ -16,7 +16,7 @@
 	<groupId>edu.gatech.chai</groupId>
 	<artifactId>omoponfhir-r4-server</artifactId>
 	<packaging>war</packaging>
-	<version>1.3.1</version>
+	<version>1.4.0</version>
 
 	<name>OMOPonFHIR RESTful Server</name>
 
@@ -31,8 +31,8 @@
 	</repositories>
 
 	<properties>
-		<hapi_stable_version>5.5.1</hapi_stable_version>
-		<omoponfhir_mapping_version>1.3.1</omoponfhir_mapping_version>
+		<hapi_stable_version>6.4.1</hapi_stable_version>
+		<omoponfhir_mapping_version>1.4.0</omoponfhir_mapping_version>
 
 		<!-- configure timestamp in MANIFEST.MF for maven-war-provider -->
 		<maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ss'Z'</maven.build.timestamp.format>
@@ -44,19 +44,17 @@
 		<jersey_version>2.25.1</jersey_version>
 		<jetty_version>9.4.35.v20201120</jetty_version>
 
-		<jackson_version>2.13.3</jackson_version>
-		<jaxb_api_version>2.3.1</jaxb_api_version>
+		<jackson_version>2.14.2</jackson_version>
 		<lucene_version>5.5.5</lucene_version>
 		<maven_assembly_plugin_version>3.1.0</maven_assembly_plugin_version>
 		<maven_license_plugin_version>1.8</maven_license_plugin_version>
 		<phloc_schematron_version>5.2.0</phloc_schematron_version>
 		<phloc_commons_version>9.3.8</phloc_commons_version>
 
-		<spring_version>5.3.19</spring_version>
+		<spring_version>5.3.23</spring_version>
 		<spring_data_version>2.2.0.RELEASE</spring_data_version>
-		<spring-boot.version>2.2.0.RELEASE</spring-boot.version>
 
-		<thymeleaf-version>3.1.0.M1</thymeleaf-version>
+		<thymeleaf-version>3.0.14.RELEASE</thymeleaf-version>
 
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<ebay_cors_filter_version>1.0.1</ebay_cors_filter_version>
@@ -65,35 +63,24 @@
 	</properties>
 
 	<dependencies>
-
-		<!-- This dependency includes the core HAPI-FHIR classes -->
+		<!-- https://mvnrepository.com/artifact/ca.uhn.hapi.fhir/org.hl7.fhir.r4 -->
 		<dependency>
 			<groupId>ca.uhn.hapi.fhir</groupId>
-			<artifactId>hapi-fhir-base</artifactId>
-			<version>${hapi_stable_version}</version>
+			<artifactId>org.hl7.fhir.r4</artifactId>
+			<version>5.6.971</version>
 		</dependency>
-
-		<!-- Include the HAPI server framework -->
-		<dependency>
-			<groupId>ca.uhn.hapi.fhir</groupId>
-			<artifactId>hapi-fhir-server</artifactId>
-			<version>${hapi_stable_version}</version>
-		</dependency>
-
 		<!-- https://mvnrepository.com/artifact/ca.uhn.hapi.fhir/hapi-fhir-client -->
 		<dependency>
 			<groupId>ca.uhn.hapi.fhir</groupId>
 			<artifactId>hapi-fhir-client</artifactId>
 			<version>${hapi_stable_version}</version>
 		</dependency>
-
-		<!-- At least one "structures" JAR must also be included -->
+		<!-- https://mvnrepository.com/artifact/ca.uhn.hapi.fhir/hapi-fhir-converter -->
 		<dependency>
 			<groupId>ca.uhn.hapi.fhir</groupId>
-			<artifactId>hapi-fhir-structures-r4</artifactId>
-			<version>${hapi_stable_version}</version>
+			<artifactId>hapi-fhir-converter</artifactId>
+			<version>6.4.0</version>
 		</dependency>
-
 		<!-- This dependency is used for the "FHIR Tester" web app overlay -->
 		<dependency>
 			<groupId>ca.uhn.hapi.fhir</groupId>
@@ -120,14 +107,7 @@
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
-			<version>1.2.3</version>
-		</dependency>
-
-		<!-- Needed for JEE/Servlet support -->
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-			<version>3.1.0</version>
+			<version>1.4.4</version>
 		</dependency>
 
 		<!-- If you are using HAPI narrative generation, you will need to include 
@@ -193,11 +173,6 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
 			<version>${spring_version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.data</groupId>
-			<artifactId>spring-data-jpa</artifactId>
-			<version>${spring_data_version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -269,31 +244,22 @@
 			<version>3.6.0</version>
 		</dependency>
 		<dependency>
-			<groupId>org.webjars.bower</groupId>
-			<artifactId>moment</artifactId>
-			<version>2.29.3</version>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.webjars/jquery-ui -->
-		<dependency>
 			<groupId>org.webjars</groupId>
 			<artifactId>jquery-ui</artifactId>
-			<version>1.13.1</version>
+			<version>1.13.2</version>
 			<scope>runtime</scope>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.webjars/jquery-ui-themes -->
 		<dependency>
 			<groupId>org.webjars</groupId>
 			<artifactId>jquery-ui-themes</artifactId>
-			<version>1.12.1</version>
+			<version>1.13.2</version>
 			<scope>runtime</scope>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.webjars/webjars-locator -->
 		<dependency>
-			<groupId>org.webjars</groupId>
-			<artifactId>webjars-locator</artifactId>
-			<version>0.39</version>
+			<groupId>org.webjars.bower</groupId>
+			<artifactId>moment</artifactId>
+			<version>2.29.4</version>
 		</dependency>
-
 		<dependency>
             <groupId>org.webjars.npm</groupId>
             <artifactId>popper.js</artifactId>
@@ -333,12 +299,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>javax.xml.bind</groupId>
-			<artifactId>jaxb-api</artifactId>
-			<version>${jaxb_api_version}</version>
-		</dependency>
-
-		<dependency>
 			<groupId>javax.interceptor</groupId>
 			<artifactId>javax.interceptor-api</artifactId>
 			<version>1.2</version>
@@ -368,13 +328,6 @@
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
 			<version>4.5.13</version>
-		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/com.github.ben-manes.caffeine/caffeine -->
-		<dependency>
-			<groupId>com.github.ben-manes.caffeine</groupId>
-			<artifactId>caffeine</artifactId>
-			<version>2.7.0</version>
 		</dependency>
 
 		<dependency>
@@ -429,19 +382,16 @@
 			<version>${jetty_version}</version>
 			<scope>test</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>jstl</groupId>
 			<artifactId>jstl</artifactId>
 			<version>1.2</version>
 		</dependency>
-
 		<dependency>
 			<groupId>org.fhir</groupId>
 			<artifactId>ucum</artifactId>
 			<version>${ucum_version}</version>
 		</dependency>
-
 	</dependencies>
 
 	<build>

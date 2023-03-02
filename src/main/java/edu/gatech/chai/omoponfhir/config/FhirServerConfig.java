@@ -35,7 +35,8 @@ import edu.gatech.chai.omopv5.dba.config.DatabaseConfigurationImpl;
 @ComponentScans(value = { @ComponentScan("edu.gatech.chai.omopv5.dba.config"),
 		@ComponentScan("edu.gatech.chai.omopv5.dba.service"),
 		@ComponentScan("edu.gatech.chai.omoponfhir.smart.dao"),
-		@ComponentScan("edu.gatech.chai.omoponfhir.local.task")})
+		@ComponentScan("edu.gatech.chai.omoponfhir.local.task"),
+		@ComponentScan("edu.gatech.chai.omopv5.dba.task")})
 @ImportResource({
     "classpath:database-config.xml"
 })
