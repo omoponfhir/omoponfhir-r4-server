@@ -32,7 +32,7 @@
 
 	<properties>
 		<hapi_stable_version>6.4.1</hapi_stable_version>
-		<omoponfhir_mapping_version>1.4.0</omoponfhir_mapping_version>
+		<omoponfhir_mapping_version>1.4.1</omoponfhir_mapping_version>
 
 		<!-- configure timestamp in MANIFEST.MF for maven-war-provider -->
 		<maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ss'Z'</maven.build.timestamp.format>
