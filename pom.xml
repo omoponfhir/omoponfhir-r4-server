@@ -16,7 +16,7 @@
 	<groupId>edu.gatech.chai</groupId>
 	<artifactId>omoponfhir-r4-server</artifactId>
 	<packaging>war</packaging>
-	<version>1.4.0</version>
+	<version>1.5.0</version>
 
 	<name>OMOPonFHIR RESTful Server</name>
 
@@ -32,7 +32,7 @@
 
 	<properties>
 		<hapi_stable_version>6.4.1</hapi_stable_version>
-		<omoponfhir_mapping_version>1.4.1</omoponfhir_mapping_version>
+		<omoponfhir_mapping_version>1.5.0</omoponfhir_mapping_version>
 
 		<!-- configure timestamp in MANIFEST.MF for maven-war-provider -->
 		<maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ss'Z'</maven.build.timestamp.format>
@@ -51,7 +51,7 @@
 		<phloc_schematron_version>5.2.0</phloc_schematron_version>
 		<phloc_commons_version>9.3.8</phloc_commons_version>
 
-		<spring_version>5.3.23</spring_version>
+		<spring_version>5.3.27</spring_version>
 		<spring_data_version>2.2.0.RELEASE</spring_data_version>
 
 		<thymeleaf-version>3.0.14.RELEASE</thymeleaf-version>
@@ -289,7 +289,7 @@
 		<dependency>
 			<groupId>org.xerial</groupId>
 			<artifactId>sqlite-jdbc</artifactId>
-			<version>3.36.0.2</version>
+			<version>3.42.0.0</version>
 		</dependency>
 
 		<dependency>

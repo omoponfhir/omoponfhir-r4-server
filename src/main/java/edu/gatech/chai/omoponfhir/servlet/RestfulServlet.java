@@ -138,6 +138,9 @@ public class RestfulServlet extends RestfulServer {
 		AllergyIntoleranceResourceProvider allergyIntoleranceResourceProvider = new AllergyIntoleranceResourceProvider();
 		providers.add(allergyIntoleranceResourceProvider);
 
+		SpecimenResourceProvider specimenResourceProvider = new SpecimenResourceProvider();
+		providers.add(specimenResourceProvider);
+
 		setResourceProviders(providers);
 
 		/*
