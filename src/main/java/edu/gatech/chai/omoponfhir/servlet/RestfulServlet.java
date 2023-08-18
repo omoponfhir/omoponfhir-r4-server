@@ -18,8 +18,8 @@ package edu.gatech.chai.omoponfhir.servlet;
 import java.util.*;
 
 import edu.gatech.chai.omoponfhir.security.OIDCInterceptor;
-import edu.gatech.chai.omoponfhir.omopv5.r4.provider.*;
 import edu.gatech.chai.omoponfhir.omopv5.r4.utilities.StaticValues;
+import edu.gatech.chai.omoponfhir.r4.provider.*;
 import edu.gatech.chai.omoponfhir.r4.security.SMARTonFHIRConformanceStatement;
 
 import org.springframework.web.cors.CorsConfiguration;
