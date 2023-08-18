@@ -141,6 +141,12 @@ public class RestfulServlet extends RestfulServer {
 		SpecimenResourceProvider specimenResourceProvider = new SpecimenResourceProvider();
 		providers.add(specimenResourceProvider);
 
+		CodeSystemResourceProvider codeSystemResourceProvider = new CodeSystemResourceProvider();
+		providers.add(codeSystemResourceProvider);
+
+		ValueSetResourceProvider valueSetResourceProvider = new ValueSetResourceProvider();
+		providers.add(valueSetResourceProvider);
+
 		setResourceProviders(providers);
 
 		/*
