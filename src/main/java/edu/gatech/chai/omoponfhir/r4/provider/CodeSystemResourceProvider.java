@@ -124,7 +124,6 @@ public class CodeSystemResourceProvider implements IResourceProvider {
         Long id = null;
         try {
             id = getMyMapper().toDbase(codeSystem, null);
-
         } catch (FHIRException e) {
             e.printStackTrace();
         }
@@ -138,7 +137,6 @@ public class CodeSystemResourceProvider implements IResourceProvider {
      */
     @Delete()
     public void deleteCodeSystem(@IdParam IdType theId) {
-        System.out.println("This is the deleteCodeSystem");
         String FhirId = theId.getValue().substring(11); 
         if (getMyMapper().removeByFhirId(new IdType (FhirId)) <= 0) {
             throw new ResourceNotFoundException(FhirId);
@@ -158,7 +156,7 @@ public class CodeSystemResourceProvider implements IResourceProvider {
         if (retVal == null) {
             throw new ResourceNotFoundException("The CodeSystem with id " + FhirId + " was not found.");
         }
-        System.out.println("The translated id in readCodeSystem is " + FhirId + " the retVal is " + retVal.getName());
+
         return retVal;
     }
     
@@ -307,7 +305,6 @@ public class CodeSystemResourceProvider implements IResourceProvider {
         @OperationParam(name = "code") CodeType theCode) {
 
             String mappingRequestUrl = theRequestDetails.getCompleteUrl();
-            System.out.println(mappingRequestUrl);
 
             String code = null;
             if (theCode != null) code = theCode.getValue();
