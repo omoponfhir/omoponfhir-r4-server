@@ -117,13 +117,7 @@ public class ValueSetResourceProvider implements IResourceProvider {
     public MethodOutcome createValueSet(@ResourceParam ValueSet valueSet) {
         validateResource(valueSet); //TODO - determine if we need to validate the resource 
 
-        Long id = null;
-        try {
-            id = getMyMapper().toDbase(valueSet, null);
-        } catch (FHIRException e) {
-            e.printStackTrace();
-        }
-
+        Long id = getMyMapper().toDbase(valueSet, null);
         return new MethodOutcome(new IdType(id));
     }
 

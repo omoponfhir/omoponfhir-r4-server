@@ -118,7 +118,7 @@ public class SpecimenResourceProvider implements IResourceProvider {
 			CodeableConcept detailCode = new CodeableConcept();
 			detailCode.setText("Failed to create entity.");
 			outcome.addIssue().setSeverity(IssueSeverity.FATAL).setDetails(detailCode);
-			throw new UnprocessableEntityException(FhirContext.forDstu3(), outcome);
+			throw new UnprocessableEntityException(FhirContext.forR4(), outcome);
 		}
 
 		return new MethodOutcome(new IdDt(id));
