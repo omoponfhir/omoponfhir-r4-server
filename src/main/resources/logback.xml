@@ -24,6 +24,11 @@
         </encoder>
     </appender>
  
+    <logger name="org.thymeleaf" level="INFO"/>
+    <logger name="org.thymeleaf.TemplateEngine.CONFIG" level="INFO"/>
+    <logger name="org.thymeleaf.TemplateEngine.TIMER" level="INFO"/>
+    <logger name="org.thymeleaf.TemplateEngine.cache.TEMPLATE_CACHE" level="INFO"/>
+
     <root level="DEBUG">
         <appender-ref ref="STDOUT" />
     </root>
