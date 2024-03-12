@@ -16,8 +16,9 @@
 
 package edu.gatech.chai.omoponfhir.security;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
@@ -195,18 +196,12 @@ public class OIDCInterceptor extends InterceptorAdapter {
 			AuthenticationException ex = new AuthenticationException("Incorrect Username and Password");
 			ex.addAuthenticateHeaderForRealm("OmopOnFhir");
 			throw ex;
-		} else if ("bearer".equalsIgnoreCase(prefix)) {			
-			try {
-				OAuthAccessResourceRequest oauthRequest = new OAuthAccessResourceRequest(theRequest, ParameterStyle.HEADER);
-				String accessToken = oauthRequest.getAccessToken();
+		} else if ("bearer".equalsIgnoreCase(prefix)) {		
+			String accessToken = authHeader.substring(7);
 
-				// check if this is local static bearer token
-				if (authBearer.equals(accessToken)) {
-					return true;
-				}
-			} catch (OAuthSystemException | OAuthProblemException e) {
-				e.printStackTrace();
-				throw new AuthenticationException("Failed to get access token");
+			// check if this is local static bearer token
+			if (authBearer.equals(accessToken)) {
+				return true;
 			}
 			
 			// checking Auth

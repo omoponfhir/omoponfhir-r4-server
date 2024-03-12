@@ -30,12 +30,16 @@ import org.hl7.fhir.r4.model.Coding;
 import org.hl7.fhir.r4.model.DateTimeType;
 import org.hl7.fhir.r4.model.DecimalType;
 import org.hl7.fhir.r4.model.Extension;
+import org.hl7.fhir.r4.model.StringType;
 import org.hl7.fhir.r4.model.UriType;
+import org.springframework.web.context.ContextLoaderListener;
+import org.springframework.web.context.WebApplicationContext;
 
 import ca.uhn.fhir.interceptor.api.Hook;
 import ca.uhn.fhir.interceptor.api.Interceptor;
 import ca.uhn.fhir.interceptor.api.Pointcut;
 import ca.uhn.fhir.util.ExtensionConstants;
+import edu.gatech.chai.omoponfhir.omopv5.r4.utilities.ConfigValues;
 import edu.gatech.chai.omoponfhir.omopv5.r4.utilities.ExtensionUtil;
 
 /**
@@ -60,6 +64,7 @@ public class SMARTonFHIRConformanceStatement {
 	String authorizeUrlValue = "http://localhost:8080/authorize";
 	String tokenUrlValue = "http://localhost:8080/token";
 
+	private ConfigValues configValues;
 
 	public SMARTonFHIRConformanceStatement() {
 		String authorizeUrl = System.getenv("SMART_AUTHSERVERURL");
@@ -73,6 +78,8 @@ public class SMARTonFHIRConformanceStatement {
 			tokenUrlValue = tokenUrl;
 		}
 
+		WebApplicationContext context = ContextLoaderListener.getCurrentWebApplicationContext();
+		configValues = context.getBean(ConfigValues.class);
 	}
 
 	@Hook(Pointcut.SERVER_CAPABILITY_STATEMENT_GENERATED)
@@ -80,11 +87,31 @@ public class SMARTonFHIRConformanceStatement {
 		CapabilityStatement cs = (CapabilityStatement) theCapabilityStatement;
 		Map<String, Long> counts = ExtensionUtil.getResourceCounts();
 
+		String title;
+		String name;
+		if (configValues.getDataSchema() != null && !configValues.getDataSchema().isBlank()) {
+			Extension ext = new Extension("urn:omoponfhir:registry:schema:data", new StringType(configValues.getDataSchema()));
+			cs.addExtension(ext);
+			ext = new Extension("urn:omoponfhir:registry:schema:vocabs", new StringType(configValues.getVocabSchema()));
+			cs.addExtension(ext);
+
+			title = configValues.getDataSchema().toLowerCase();
+			title = title.substring(0, 1).toUpperCase() + title.substring(1);
+			title += " FHIR Server";
+			name = configValues.getDataSchema();
+		} else {
+			title = "OMOPonFHIR FHIR Server";
+			name = "OMOPonFHIR";
+		}
+
+		cs.setTitle(title);
+		cs.setName(name);
+
 		cs
          .getSoftware()
         //  .setName("OMOP v5.3.1 on FHIR R4")
-         .setVersion("v1.3.1")
-         .setReleaseDateElement(new DateTimeType("2023-02-07"));
+         .setVersion("v1.4.0")
+         .setReleaseDateElement(new DateTimeType("2024-03-10"));
 
 		cs.setPublisher("Georgia Tech Research Institute - HEAT");
 

@@ -67,7 +67,7 @@ public class SpecimenResourceProvider implements IResourceProvider {
 	public SpecimenResourceProvider() {
 		myAppCtx = ContextLoaderListener.getCurrentWebApplicationContext();
 		myMapper = new OmopSpecimen(myAppCtx);
-		
+
 		String pageSizeStr = myAppCtx.getServletContext().getInitParameter("preferredPageSize");
 		if (pageSizeStr != null && !pageSizeStr.isEmpty()) {
 			int pageSize = Integer.parseInt(pageSizeStr);
@@ -76,7 +76,7 @@ public class SpecimenResourceProvider implements IResourceProvider {
 			} 
 		}
 	}
-	
+
 	public static String getType() {
 		return "Specimen";
 	}
@@ -84,7 +84,7 @@ public class SpecimenResourceProvider implements IResourceProvider {
 	public OmopSpecimen getMyMapper() {
 		return myMapper;
 	}
-	
+
 	private Integer getTotalSize(List<ParameterWrapper> paramList) {
 		final Long totalSize;
 		if (paramList.isEmpty()) {
@@ -92,7 +92,7 @@ public class SpecimenResourceProvider implements IResourceProvider {
 		} else {
 			totalSize = getMyMapper().getSize(paramList);
 		}
-		
+
 		return totalSize.intValue();
 	}
 
@@ -104,7 +104,7 @@ public class SpecimenResourceProvider implements IResourceProvider {
 	@Create()
 	public MethodOutcome createSpecimen(@ResourceParam Specimen theSpecimen) {
 		validateResource(theSpecimen);
-		
+
 		Long id = null;
 		try {
 			id = getMyMapper().toDbase(theSpecimen, null);
@@ -112,13 +112,13 @@ public class SpecimenResourceProvider implements IResourceProvider {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		if (id == null) {
 			OperationOutcome outcome = new OperationOutcome();
 			CodeableConcept detailCode = new CodeableConcept();
 			detailCode.setText("Failed to create entity.");
 			outcome.addIssue().setSeverity(IssueSeverity.FATAL).setDetails(detailCode);
-			throw new UnprocessableEntityException(FhirContext.forR4(), outcome);
+			throw new UnprocessableEntityException(FhirContext.forDstu3(), outcome);
 		}
 
 		return new MethodOutcome(new IdDt(id));
@@ -138,7 +138,7 @@ public class SpecimenResourceProvider implements IResourceProvider {
 
 			@IncludeParam(allow={"Specimen:subject"})
 			final Set<Include> theIncludes,
-			
+
 			@IncludeParam(reverse=true)
             final Set<Include> theReverseIncludes
 			) {
@@ -156,7 +156,7 @@ public class SpecimenResourceProvider implements IResourceProvider {
 		myBundleProvider.setOrderParams(orderParams);
 		return myBundleProvider;
 	}
-	
+
 	@Search()
 	public IBundleProvider findSpecimensByParams(
 			@OptionalParam(name=Specimen.SP_COLLECTED) DateRangeParam theRangeDate,
@@ -166,16 +166,16 @@ public class SpecimenResourceProvider implements IResourceProvider {
 
 			@IncludeParam(allow={"Specimen:subject"})
 			final Set<Include> theIncludes,
-			
+
 			@IncludeParam(reverse=true)
             final Set<Include> theReverseIncludes
 			) {		
 		List<ParameterWrapper> paramList = new ArrayList<ParameterWrapper> ();
-		
+
 		if (theRangeDate != null) {
 			paramList.addAll(getMyMapper().mapParameter(Specimen.SP_COLLECTED, theRangeDate, false));
 		}
-		
+
 		// With OMOP, we only support subject to be patient.
 		// If the subject has only ID part, we assume that is patient.
 		if (theSubject != null) {
@@ -191,7 +191,7 @@ public class SpecimenResourceProvider implements IResourceProvider {
 				}
 			}
 		}
-		
+
 		if (thePatient != null) {
 			String patientChain = thePatient.getChain();
 			if (patientChain != null) {
@@ -207,7 +207,7 @@ public class SpecimenResourceProvider implements IResourceProvider {
 				paramList.addAll(getMyMapper().mapParameter ("Patient:"+Patient.SP_RES_ID, thePatient.getIdPart(), false));
 			}
 		}
-		
+
 		String orderParams = getMyMapper().constructOrderParams(theSort);
 
 		MyBundleProvider myBundleProvider = new MyBundleProvider(paramList, theIncludes, theReverseIncludes);
@@ -216,7 +216,7 @@ public class SpecimenResourceProvider implements IResourceProvider {
 		myBundleProvider.setOrderParams(orderParams);
 		return myBundleProvider;
 	}
-	
+
 	/**
 	 * This is the "read" operation. The "@Read" annotation indicates that this method supports the read and/or vread operation.
 	 * <p>
@@ -233,7 +233,7 @@ public class SpecimenResourceProvider implements IResourceProvider {
 		if (retval == null) {
 			throw new ResourceNotFoundException(theId);
 		}
-			
+
 		return retval;
 	}
 
@@ -250,7 +250,7 @@ public class SpecimenResourceProvider implements IResourceProvider {
 	@Update()
 	public MethodOutcome updateSpecimen(@IdParam IdType theId, @ResourceParam Specimen theSpecimen) {
 		validateResource(theSpecimen);
-		
+
 		Long fhirId=null;
 		try {
 			fhirId = getMyMapper().toDbase(theSpecimen, theId);
@@ -264,7 +264,7 @@ public class SpecimenResourceProvider implements IResourceProvider {
 
 		return new MethodOutcome();
 	}
-	
+
 	// TODO: Add validation code here.
 	private void validateResource(Specimen theSpecimen) {
 		if (theSpecimen.getSubject() == null || theSpecimen.getSubject().isEmpty()) {
@@ -304,7 +304,7 @@ public class SpecimenResourceProvider implements IResourceProvider {
 		@Override
 		public List<IBaseResource> getResources(int fromIndex, int toIndex) {
 			List<IBaseResource> retv = new ArrayList<IBaseResource>();
-			
+
 			// _Include
 			List<String> includes = new ArrayList<String>();
 

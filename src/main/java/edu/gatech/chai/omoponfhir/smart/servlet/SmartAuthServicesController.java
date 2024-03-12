@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.UUID;
 
 import javax.crypto.SecretKey;
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.codec.binary.Base64;
 import org.json.JSONObject;
@@ -67,6 +66,7 @@ import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * auth/ implementation for SMART on FHIR support for authentication

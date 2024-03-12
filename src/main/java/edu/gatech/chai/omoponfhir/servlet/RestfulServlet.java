@@ -18,10 +18,15 @@ package edu.gatech.chai.omoponfhir.servlet;
 import java.util.*;
 
 import edu.gatech.chai.omoponfhir.security.OIDCInterceptor;
+import edu.gatech.chai.omoponfhir.config.FhirServerConfig;
 import edu.gatech.chai.omoponfhir.omopv5.r4.utilities.StaticValues;
 import edu.gatech.chai.omoponfhir.r4.provider.*;
 import edu.gatech.chai.omoponfhir.r4.security.SMARTonFHIRConformanceStatement;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.context.ContextLoaderListener;
+import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.cors.CorsConfiguration;
 
 import ca.uhn.fhir.narrative.DefaultThymeleafNarrativeGenerator;
@@ -41,6 +46,9 @@ import ca.uhn.fhir.rest.server.interceptor.ResponseHighlighterInterceptor;
 public class RestfulServlet extends RestfulServer {
 
 	private static final long serialVersionUID = 1L;
+	private static final Logger logger = LoggerFactory.getLogger(RestfulServlet.class);
+
+    private FhirServerConfig fhirServerConfig;
 	
 	/**
 	 * Constructor
@@ -63,7 +71,12 @@ public class RestfulServlet extends RestfulServer {
 		}
 
 		// If we have system environment variable to hardcode the base URL, do it now.
-		String serverBaseUrl = System.getenv("SERVERBASE_URL");
+		// String serverBaseUrl = System.getenv("SERVERBASE_URL");
+
+		WebApplicationContext context = ContextLoaderListener.getCurrentWebApplicationContext();
+		fhirServerConfig = context.getBean(FhirServerConfig.class);
+		String serverBaseUrl = fhirServerConfig.getServerBaseUrl();
+
 		if (serverBaseUrl != null && !serverBaseUrl.isEmpty() && !serverBaseUrl.trim().equalsIgnoreCase("")) {
 			serverBaseUrl = serverBaseUrl.trim();
 			if (!serverBaseUrl.startsWith("http://") && !serverBaseUrl.startsWith("https://")) {
@@ -78,6 +91,8 @@ public class RestfulServlet extends RestfulServer {
 			setServerAddressStrategy(serverAddressStrategy);
 		}
 
+		logger.debug("SERVER BASE URL is " + serverBaseUrl);
+		
 		/*
 		 * Set non resource provider.
 		 */

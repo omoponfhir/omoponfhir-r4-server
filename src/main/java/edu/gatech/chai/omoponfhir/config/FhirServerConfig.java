@@ -18,6 +18,7 @@ package edu.gatech.chai.omoponfhir.config;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ComponentScans;
@@ -36,7 +37,10 @@ import edu.gatech.chai.omopv5.dba.config.DatabaseConfigurationImpl;
 		@ComponentScan("edu.gatech.chai.omopv5.dba.service"),
 		@ComponentScan("edu.gatech.chai.omoponfhir.smart.dao"),
 		@ComponentScan("edu.gatech.chai.omoponfhir.local.task"),
-		@ComponentScan("edu.gatech.chai.omopv5.dba.task")})
+		@ComponentScan("edu.gatech.chai.omopv5.dba.task"),
+		@ComponentScan("edu.gatech.chai.omoponfhir.omopv5.r4.provider"),
+		@ComponentScan("edu.gatech.chai.omoponfhir.config"),
+		@ComponentScan("edu.gatech.chai.omoponfhir.omopv5.r4.utilities")})
 @ImportResource({
     "classpath:database-config.xml"
 })
@@ -44,6 +48,9 @@ public class FhirServerConfig {
 	// We autowire dataSource in case that someone prefer setting up using XML
 	@Autowired
 	DataSource dataSource;
+
+	@Value("${server.baseurl}")
+    private String serverBaseUrl;
 
 	@Bean()
 	public DatabaseConfiguration databaseConfiguration() {
@@ -65,4 +72,7 @@ public class FhirServerConfig {
 		return databaseConfiguration;
 	}
 
+	public String getServerBaseUrl() {
+		return this.serverBaseUrl;
+	}
 }
