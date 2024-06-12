@@ -178,6 +178,7 @@ public class ConditionResourceProvider implements IResourceProvider {
 			// @OptionalParam(name = Condition.SP_PATIENT) ReferenceParam thePatientId,
 			@OptionalParam(name = Condition.SP_PATIENT, chainWhitelist={"", Patient.SP_NAME, Patient.SP_IDENTIFIER}) ReferenceParam thePatient,
 			@OptionalParam(name = Condition.SP_SUBJECT, chainWhitelist={"", Patient.SP_NAME, Patient.SP_IDENTIFIER}) ReferenceParam theSubject,
+			@OptionalParam(name = Condition.SP_CATEGORY) TokenOrListParam theOrCategories,
 			@OptionalParam(name = Condition.SP_RECORDED_DATE) DateRangeParam theRecordedDate) {
 		List<ParameterWrapper> paramList = new ArrayList<ParameterWrapper>();
 
@@ -188,6 +189,16 @@ public class ConditionResourceProvider implements IResourceProvider {
 				orValue = false;
 			for (TokenParam code : codes) {
 				paramList.addAll(myMapper.mapParameter(Condition.SP_CODE, code, orValue));
+			}
+		}
+
+		if (theOrCategories != null) {
+			List<TokenParam> codes = theOrCategories.getValuesAsQueryTokens();
+			boolean orValue = true;
+			if (codes.size() <= 1)
+				orValue = false;
+			for (TokenParam code : codes) {
+				paramList.addAll(myMapper.mapParameter(Condition.SP_CATEGORY, code, orValue));
 			}
 		}
 
