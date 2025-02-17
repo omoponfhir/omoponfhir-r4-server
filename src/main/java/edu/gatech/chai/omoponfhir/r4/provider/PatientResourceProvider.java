@@ -112,7 +112,7 @@ public class PatientResourceProvider implements IResourceProvider {
 		return myMapper;
 	}
 
-	private Integer getTotalSize(List<ParameterWrapper> paramList) {
+	private Integer getTotalSize(List<ParameterWrapper> paramList) throws Exception {
 		final Long totalSize;
 		if (paramList.size() == 0) {
 			totalSize = getMyMapper().getSize();
@@ -128,7 +128,7 @@ public class PatientResourceProvider implements IResourceProvider {
 	 * which adds a new instance of a resource to the server.
 	 */
 	@Create()
-	public MethodOutcome createPatient(@ResourceParam USCorePatient thePatient) {
+	public MethodOutcome createPatient(@ResourceParam USCorePatient thePatient) throws Exception {
 		validateResource(thePatient);
 
 		Long id = null;
@@ -142,7 +142,7 @@ public class PatientResourceProvider implements IResourceProvider {
 	}
 
 	@Delete()
-	public void deletePatient(@IdParam IdType theId) {
+	public void deletePatient(@IdParam IdType theId) throws Exception {
 		if (getMyMapper().removeByFhirId(theId) <= 0) {
 			throw new ResourceNotFoundException(theId);
 		}
@@ -177,7 +177,7 @@ public class PatientResourceProvider implements IResourceProvider {
 			"Patient:link" }) final Set<Include> theIncludes,
 
 			@IncludeParam(allow = { "Encounter:subject",
-			"Observation:subject" }, reverse = true) final Set<Include> theReverseIncludes) {
+			"Observation:subject" }, reverse = true) final Set<Include> theReverseIncludes) throws Exception {
 
 		List<ParameterWrapper> paramList = new ArrayList<ParameterWrapper> ();
 
@@ -234,7 +234,7 @@ public class PatientResourceProvider implements IResourceProvider {
 					"Patient:link" }) final Set<Include> theIncludes,
 
 			@IncludeParam(allow = { "Encounter:subject",
-					"Observation:subject" }, reverse = true) final Set<Include> theReverseIncludes) {
+					"Observation:subject" }, reverse = true) final Set<Include> theReverseIncludes) throws Exception {
 		
 		/*
 		 * Create parameter map, which will be used later to construct predicate. The
@@ -335,7 +335,7 @@ public class PatientResourceProvider implements IResourceProvider {
 	 * @return Returns a resource matching this identifier, or null if none exists.
 	 */
 	@Read()
-	public Patient readPatient(@IdParam IdType theId) {
+	public Patient readPatient(@IdParam IdType theId) throws Exception {
 		Patient retval = (Patient) getMyMapper().toFHIR(theId);
 		if (retval == null) {
 			throw new ResourceNotFoundException(theId);
@@ -353,7 +353,7 @@ public class PatientResourceProvider implements IResourceProvider {
 	 * @return This method returns a "MethodOutcome"
 	 */
 	@Update()
-	public MethodOutcome updatePatient(@IdParam IdType theId, @ResourceParam USCorePatient thePatient) {
+	public MethodOutcome updatePatient(@IdParam IdType theId, @ResourceParam USCorePatient thePatient) throws Exception {
 		validateResource(thePatient);
 
 		Long fhirId = null;
@@ -374,7 +374,7 @@ public class PatientResourceProvider implements IResourceProvider {
 	 */
 	@Operation(name = "$everything", idempotent = true, bundleType = BundleTypeEnum.SEARCHSET)
 	public IBundleProvider patientEverythingOperation(RequestDetails theRequestDetails, @IdParam IdType thePatientId, @OperationParam(name = "start") DateType theStart,
-			@OperationParam(name = "end") DateType theEnd) {
+			@OperationParam(name = "end") DateType theEnd) throws Exception {
 
 		if (thePatientId == null) {
 			ThrowFHIRExceptions.unprocessableEntityException("Patient Id must be present");
@@ -518,10 +518,15 @@ public class PatientResourceProvider implements IResourceProvider {
 			}
 
 			System.out.println("SORT!!!!!! "+orderParams);
-			if (paramList.size() == 0) {
-				getMyMapper().searchWithoutParams(fromIndex, toIndex, retv, includes, orderParams);
-			} else {
-				getMyMapper().searchWithParams(fromIndex, toIndex, paramList, retv, includes, orderParams);
+
+			try {
+				if (paramList.size() == 0) {
+					getMyMapper().searchWithoutParams(fromIndex, toIndex, retv, includes, orderParams);
+				} else {
+					getMyMapper().searchWithParams(fromIndex, toIndex, paramList, retv, includes, orderParams);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 
 			return retv;

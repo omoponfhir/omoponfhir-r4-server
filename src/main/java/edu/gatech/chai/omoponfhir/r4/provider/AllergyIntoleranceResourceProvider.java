@@ -84,7 +84,7 @@ public class AllergyIntoleranceResourceProvider implements IResourceProvider {
 		return myMapper;
 	}
 
-	private Integer getTotalSize(List<ParameterWrapper> paramList) {
+	private Integer getTotalSize(List<ParameterWrapper> paramList) throws Exception {
 		final Long totalSize;
 		if (paramList.isEmpty()) {
 			totalSize = getMyMapper().getSize();
@@ -100,7 +100,7 @@ public class AllergyIntoleranceResourceProvider implements IResourceProvider {
 	 * "create=type", which adds a new instance of a resource to the server.
 	 */
 	@Create()
-	public MethodOutcome createAllergyIntolerance(@ResourceParam AllergyIntolerance allergyIntolerance) {
+	public MethodOutcome createAllergyIntolerance(@ResourceParam AllergyIntolerance allergyIntolerance) throws Exception {
 
 		Long id = null;
 		try {
@@ -121,7 +121,7 @@ public class AllergyIntoleranceResourceProvider implements IResourceProvider {
 	}
 
 	@Delete()
-	public void deleteAllergyIntolerance(@IdParam IdType theId) {
+	public void deleteAllergyIntolerance(@IdParam IdType theId) throws Exception {
 		if (myMapper.removeByFhirId(theId) <= 0) {
 			throw new ResourceNotFoundException(theId);
 		}
@@ -139,7 +139,7 @@ public class AllergyIntoleranceResourceProvider implements IResourceProvider {
 	 *         exists.
 	 */
 	@Read()
-	public AllergyIntolerance getResourceById(@IdParam IdType theId) {
+	public AllergyIntolerance getResourceById(@IdParam IdType theId) throws Exception {
 		AllergyIntolerance retVal = myMapper.toFHIR(theId);
 		if (retVal == null) {
 			throw new ResourceNotFoundException(theId);
@@ -151,7 +151,7 @@ public class AllergyIntoleranceResourceProvider implements IResourceProvider {
 	@Search()
 	public IBundleProvider findAllergyIntoleranceById(
 			@RequiredParam(name = AllergyIntolerance.SP_RES_ID) TokenParam theConditionId
-			) {
+			) throws Exception {
 		List<ParameterWrapper> paramList = new ArrayList<ParameterWrapper>();
 
 		if (theConditionId != null) {
@@ -171,7 +171,7 @@ public class AllergyIntoleranceResourceProvider implements IResourceProvider {
 			@OptionalParam(name = AllergyIntolerance.SP_PATIENT, chainWhitelist={"", Patient.SP_NAME, Patient.SP_IDENTIFIER}) ReferenceParam thePatient,
 			@OptionalParam(name = AllergyIntolerance.SP_CODE) TokenOrListParam theOrCodes,
 			@OptionalParam(name = AllergyIntolerance.SP_ONSET) DateRangeParam theRangeDate,
-			@Sort SortSpec theSort) {
+			@Sort SortSpec theSort) throws Exception {
 		
 		List<ParameterWrapper> paramList = new ArrayList<ParameterWrapper>();
 
@@ -236,7 +236,7 @@ public class AllergyIntoleranceResourceProvider implements IResourceProvider {
 	 *         exists.
 	 */
 	@Read()
-	public AllergyIntolerance readAllergyIntolerance(@IdParam IdType theId) {
+	public AllergyIntolerance readAllergyIntolerance(@IdParam IdType theId) throws Exception {
 		AllergyIntolerance retval = myMapper.toFHIR(theId);
 		if (retval == null) {
 			throw new ResourceNotFoundException(theId);
@@ -256,7 +256,7 @@ public class AllergyIntoleranceResourceProvider implements IResourceProvider {
 	 * @return This method returns a "MethodOutcome"
 	 */
 	@Update()
-	public MethodOutcome updateAllergyIntolerance(@IdParam IdType theId, @ResourceParam AllergyIntolerance theAllergyIntolerance) {
+	public MethodOutcome updateAllergyIntolerance(@IdParam IdType theId, @ResourceParam AllergyIntolerance theAllergyIntolerance) throws Exception {
 		validateResource(theAllergyIntolerance);
 
 		Long fhirId = null;
@@ -290,12 +290,16 @@ public class AllergyIntoleranceResourceProvider implements IResourceProvider {
 			// _Include
 			List<String> includes = new ArrayList<String>();
 
-			if (paramList.isEmpty()) {
-				myMapper.searchWithoutParams(fromIndex, toIndex, retv, includes, null);
-			} else {
-				myMapper.searchWithParams(fromIndex, toIndex, paramList, retv, includes, null);
+			try {
+				if (paramList.isEmpty()) {
+					myMapper.searchWithoutParams(fromIndex, toIndex, retv, includes, null);
+				} else {
+					myMapper.searchWithParams(fromIndex, toIndex, paramList, retv, includes, null);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-
+			
 			return retv;
 		}
 

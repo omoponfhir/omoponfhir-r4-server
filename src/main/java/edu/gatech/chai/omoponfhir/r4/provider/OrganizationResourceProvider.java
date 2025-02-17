@@ -88,7 +88,7 @@ public class OrganizationResourceProvider implements IResourceProvider {
 		return myMapper;
 	}
 	
-	private Integer getTotalSize(List<ParameterWrapper> paramList) {
+	private Integer getTotalSize(List<ParameterWrapper> paramList) throws Exception {
 		final Long totalSize;
 		if (paramList.size() == 0) {
 			totalSize = getMyMapper().getSize();
@@ -105,7 +105,7 @@ public class OrganizationResourceProvider implements IResourceProvider {
 	 * "create=type", which adds a new instance of a resource to the server.
 	 */
 	@Create()
-	public MethodOutcome createOrganization(@ResourceParam Organization theOrganization) {
+	public MethodOutcome createOrganization(@ResourceParam Organization theOrganization) throws Exception {
 		// validateResource(thePatient);
 
 		Long id=null;
@@ -119,7 +119,7 @@ public class OrganizationResourceProvider implements IResourceProvider {
 	}
 
 	@Delete()
-	public void deleteOrganization(@IdParam IdType theId) {
+	public void deleteOrganization(@IdParam IdType theId) throws Exception {
 		if (myMapper.removeByFhirId(theId) <= 0) {
 			throw new ResourceNotFoundException(theId);
 		}
@@ -146,7 +146,7 @@ public class OrganizationResourceProvider implements IResourceProvider {
 	 *         exists.
 	 */
 	@Read()
-	public Organization getResourceById(@IdParam IdType theId) {
+	public Organization getResourceById(@IdParam IdType theId) throws Exception {
 		Organization retVal = myMapper.toFHIR(theId);
 		if (retVal == null) {
 			throw new ResourceNotFoundException(theId);
@@ -162,7 +162,7 @@ public class OrganizationResourceProvider implements IResourceProvider {
 			
 			@IncludeParam(allow={"Organization:partof"})
 			final Set<Include> theIncludes
-			) {
+			) throws Exception {
 		List<ParameterWrapper> paramList = new ArrayList<ParameterWrapper> ();
 
 		if (theOrganizationId != null) {
@@ -189,7 +189,7 @@ public class OrganizationResourceProvider implements IResourceProvider {
 	 * @return Returns a resource matching this identifier, or null if none exists.
 	 */
 	@Read()
-	public Organization readOrganization(@IdParam IdType theId) {
+	public Organization readOrganization(@IdParam IdType theId) throws Exception {
 		Organization retval = myMapper.toFHIR(theId);
 		if (retval == null) {
 			throw new ResourceNotFoundException(theId);
@@ -209,7 +209,7 @@ public class OrganizationResourceProvider implements IResourceProvider {
 	 * @return This method returns a "MethodOutcome"
 	 */
 	@Update()
-	public MethodOutcome updateOrganization(@IdParam IdType theId, @ResourceParam Organization theOrganization) {
+	public MethodOutcome updateOrganization(@IdParam IdType theId, @ResourceParam Organization theOrganization) throws Exception {
 		validateResource(theOrganization);
 
 		Long fhirId=null;
@@ -251,10 +251,14 @@ public class OrganizationResourceProvider implements IResourceProvider {
 				includes.add("Organization:partof");
 			}
 
-			if (paramList.size() == 0) {
-				myMapper.searchWithoutParams(fromIndex, toIndex, retv, includes, null);
-			} else {
-				myMapper.searchWithParams(fromIndex, toIndex, paramList, retv, includes, null);
+			try {
+				if (paramList.size() == 0) {
+					myMapper.searchWithoutParams(fromIndex, toIndex, retv, includes, null);
+				} else {
+					myMapper.searchWithParams(fromIndex, toIndex, paramList, retv, includes, null);
+				} 
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 
 			return retv;

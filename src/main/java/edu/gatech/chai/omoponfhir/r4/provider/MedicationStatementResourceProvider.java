@@ -82,7 +82,7 @@ public class MedicationStatementResourceProvider implements IResourceProvider {
 
 	}
 
-	private Integer getTotalSize(List<ParameterWrapper> paramList) {
+	private Integer getTotalSize(List<ParameterWrapper> paramList) throws Exception {
 		final Long totalSize;
 		if (paramList.size() == 0) {
 			totalSize = getMyMapper().getSize();
@@ -98,7 +98,7 @@ public class MedicationStatementResourceProvider implements IResourceProvider {
 	 * which adds a new instance of a resource to the server.
 	 */
 	@Create()
-	public MethodOutcome createMedicationStatement(@ResourceParam MedicationStatement theMedicationStatement) {
+	public MethodOutcome createMedicationStatement(@ResourceParam MedicationStatement theMedicationStatement) throws Exception {
 		validateResource(theMedicationStatement);
 
 		Long id = null;
@@ -120,7 +120,7 @@ public class MedicationStatementResourceProvider implements IResourceProvider {
 	}
 
 	@Delete()
-	public void deleteMedicationStatement(@IdParam IdType theId) {
+	public void deleteMedicationStatement(@IdParam IdType theId) throws Exception {
 		if (myMapper.removeByFhirId(theId) <= 0) {
 			throw new ResourceNotFoundException(theId);
 		}
@@ -128,7 +128,7 @@ public class MedicationStatementResourceProvider implements IResourceProvider {
 
 	@Update()
 	public MethodOutcome updateMedicationStatement(@IdParam IdType theId,
-			@ResourceParam MedicationStatement theMedicationStatement) {
+			@ResourceParam MedicationStatement theMedicationStatement) throws Exception {
 		validateResource(theMedicationStatement);
 
 		Long fhirId = null;
@@ -146,7 +146,7 @@ public class MedicationStatementResourceProvider implements IResourceProvider {
 	}
 
 	@Read()
-	public MedicationStatement readMedicationStatement(@IdParam IdType theId) {
+	public MedicationStatement readMedicationStatement(@IdParam IdType theId) throws Exception {
 		MedicationStatement retval = (MedicationStatement) myMapper.toFHIR(theId);
 		if (retval == null) {
 			throw new ResourceNotFoundException(theId);
@@ -157,7 +157,7 @@ public class MedicationStatementResourceProvider implements IResourceProvider {
 
 	@Search()
 	public IBundleProvider findMedicationStatementsById(
-			@RequiredParam(name = MedicationStatement.SP_RES_ID) TokenParam theMedicationStatementId) {
+			@RequiredParam(name = MedicationStatement.SP_RES_ID) TokenParam theMedicationStatementId) throws Exception {
 		List<ParameterWrapper> paramList = new ArrayList<ParameterWrapper>();
 
 		if (theMedicationStatementId != null) {
@@ -179,7 +179,7 @@ public class MedicationStatementResourceProvider implements IResourceProvider {
 					Patient.SP_IDENTIFIER }) ReferenceOrListParam thePatients,
 			@OptionalParam(name = MedicationStatement.SP_SUBJECT, chainWhitelist = { "", Patient.SP_NAME,
 					Patient.SP_IDENTIFIER }) ReferenceOrListParam theSubjects,
-			@OptionalParam(name = MedicationStatement.SP_SOURCE) ReferenceParam theSource) {
+			@OptionalParam(name = MedicationStatement.SP_SOURCE) ReferenceParam theSource) throws Exception {
 		List<ParameterWrapper> paramList = new ArrayList<ParameterWrapper>();
 
 		if (theOrCodes != null) {
@@ -307,10 +307,14 @@ public class MedicationStatementResourceProvider implements IResourceProvider {
 			// _Include
 			List<String> includes = new ArrayList<String>();
 
-			if (paramList.size() == 0) {
-				myMapper.searchWithoutParams(fromIndex, toIndex, retv, includes, null);
-			} else {
-				myMapper.searchWithParams(fromIndex, toIndex, paramList, retv, includes, null);
+			try {
+				if (paramList.size() == 0) {
+					myMapper.searchWithoutParams(fromIndex, toIndex, retv, includes, null);
+				} else {
+					myMapper.searchWithParams(fromIndex, toIndex, paramList, retv, includes, null);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 
 			return retv;

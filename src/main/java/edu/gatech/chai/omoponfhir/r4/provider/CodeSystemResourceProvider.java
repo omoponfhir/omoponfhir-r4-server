@@ -101,7 +101,7 @@ public class CodeSystemResourceProvider implements IResourceProvider {
         return myMapper;
     }
 
-    public Integer getTotalSize(List<ParameterWrapper> paramList) {
+    public Integer getTotalSize(List<ParameterWrapper> paramList) throws Exception {
         final Long totalSize;
         if (paramList.size() == 0) {
             totalSize = getMyMapper().getSize();
@@ -117,9 +117,10 @@ public class CodeSystemResourceProvider implements IResourceProvider {
      * TODO: (Id mapping) This method will add a new instance of a resource to the server
      * @param codeSystem CodeSystem that will be saved as a new resource to the server, allowing the server to give that resource an ID and version ID
      * @return MethodOutcome that contains the identity of the created resource 
+     * @throws Exception 
      */
     @Create() 
-    public MethodOutcome createCodeSystem(@ResourceParam CodeSystem codeSystem) {
+    public MethodOutcome createCodeSystem(@ResourceParam CodeSystem codeSystem) throws Exception {
         validateResource(codeSystem);
         Long id = null;
         try {
@@ -148,9 +149,10 @@ public class CodeSystemResourceProvider implements IResourceProvider {
      * The read operation retrieves a resource by Id
      * @param theId Id parameter which supplies the Id of the resource to read
      * @return CodeSystem that has a matching Id 
+     * @throws Exception 
      */
     @Read()
-    public CodeSystem readCodeSystem(@IdParam IdType theId) {
+    public CodeSystem readCodeSystem(@IdParam IdType theId) throws Exception {
         String FhirId = theId.getValue().substring(11);
         CodeSystem retVal = myMapper.toFHIR(new IdType(FhirId));
         if (retVal == null) {
@@ -173,7 +175,7 @@ public class CodeSystemResourceProvider implements IResourceProvider {
             @Sort SortSpec theSort,
 
             @IncludeParam(allow = {"CodeSystem:supplements"}) final Set<Include> theIncludes,
-            @IncludeParam(reverse=true) final Set<Include> theReverseIncludes) {
+            @IncludeParam(reverse=true) final Set<Include> theReverseIncludes) throws Exception {
 
         List<ParameterWrapper> paramList = new ArrayList<ParameterWrapper>();
 
@@ -222,7 +224,7 @@ public class CodeSystemResourceProvider implements IResourceProvider {
         @OptionalParam(name = CodeSystem.SP_CONTENT_MODE) TokenParam theContentMode,
         @Sort SortSpec theSort, 
         @IncludeParam(allow = {"CodeSystem:supplements"}) final Set<Include> theIncludes,
-        @IncludeParam(reverse=true) final Set<Include> theReverseIncludes){
+        @IncludeParam(reverse=true) final Set<Include> theReverseIncludes) throws Exception {
 
         List<ParameterWrapper> paramList = new ArrayList<ParameterWrapper>();
         if (theCode != null) {
@@ -267,9 +269,10 @@ public class CodeSystemResourceProvider implements IResourceProvider {
      * @param theId Id parameter which supplies the Id of the resource to read
      * @param codeSystem CodeSystem to be updated 
      * @return MethodOutcome that contains the identity of the created resource 
+     * @throws Exception 
      */
     @Update() 
-    public MethodOutcome updateCodeSystem(@IdParam IdType theId, @ResourceParam CodeSystem codeSystem) {
+    public MethodOutcome updateCodeSystem(@IdParam IdType theId, @ResourceParam CodeSystem codeSystem) throws Exception {
         validateResource(codeSystem);
         Long fhirId = null;
         try {
@@ -428,10 +431,15 @@ public class CodeSystemResourceProvider implements IResourceProvider {
 			}
 
             System.out.println("SORT!!!!!! " + orderParams);
-            if (paramList.size() == 0) {
-                getMyMapper().searchWithoutParams(fromIndex, toIndex, retv, includes, orderParams);
-            } else {
-                getMyMapper().searchWithParams(fromIndex, toIndex, paramList, retv, includes, orderParams);
+
+            try {
+                if (paramList.size() == 0) {
+                    getMyMapper().searchWithoutParams(fromIndex, toIndex, retv, includes, orderParams);
+                } else {
+                    getMyMapper().searchWithParams(fromIndex, toIndex, paramList, retv, includes, orderParams);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
             return retv;
         }

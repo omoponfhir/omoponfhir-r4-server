@@ -75,7 +75,7 @@ public class MedicationResourceProvider implements IResourceProvider {
 		return myMapper;
 	}
 
-	private Integer getTotalSize(List<ParameterWrapper> paramList) {
+	private Integer getTotalSize(List<ParameterWrapper> paramList) throws Exception {
 		final Long totalSize;
 		if (paramList.size() == 0) {
 			totalSize = getMyMapper().getSize();
@@ -92,7 +92,7 @@ public class MedicationResourceProvider implements IResourceProvider {
 //	}
 
 	@Read()
-	public Medication readMedication(@IdParam IdType theId) {
+	public Medication readMedication(@IdParam IdType theId) throws Exception {
 		Medication retval = (Medication) myMapper.toFHIR(theId);
 		if (retval == null) {
 			throw new ResourceNotFoundException(theId);
@@ -104,7 +104,7 @@ public class MedicationResourceProvider implements IResourceProvider {
 	@Search()
 	public IBundleProvider findMedicationById(
 			@RequiredParam(name = Medication.SP_RES_ID) TokenParam theMedicationId
-			) {
+			) throws Exception {
 		List<ParameterWrapper> paramList = new ArrayList<ParameterWrapper>();
 		
 		if (theMedicationId != null) {
@@ -121,7 +121,7 @@ public class MedicationResourceProvider implements IResourceProvider {
 	@Search()
 	public IBundleProvider findMedicationByParams(
 			@OptionalParam(name = Medication.SP_CODE) TokenOrListParam theOrCodes			
-			) {
+			) throws Exception {
 		List<ParameterWrapper> paramList = new ArrayList<ParameterWrapper>();
 
 		if (theOrCodes != null) {
@@ -190,10 +190,14 @@ public class MedicationResourceProvider implements IResourceProvider {
 			// _Include
 			List<String> includes = new ArrayList<String>();
 
-			if (paramList.size() == 0) {
-				myMapper.searchWithoutParams(fromIndex, toIndex, retv, includes, null);
-			} else {
-				myMapper.searchWithParams(fromIndex, toIndex, paramList, retv, includes, null);
+			try {
+				if (paramList.size() == 0) {
+					myMapper.searchWithoutParams(fromIndex, toIndex, retv, includes, null);
+				} else {
+					myMapper.searchWithParams(fromIndex, toIndex, paramList, retv, includes, null);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 
 			return retv;

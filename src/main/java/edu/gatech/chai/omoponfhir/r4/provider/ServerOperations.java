@@ -92,7 +92,7 @@ public class ServerOperations {
 		try {
 			resultEntries = myMapper.createEntries(resources);
 			messageHeaderResponse.setCode(ResponseType.OK);
-		} catch (FHIRException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			messageHeaderResponse.setCode(ResponseType.OK);
 			OperationOutcome outcome = new OperationOutcome();

@@ -83,7 +83,7 @@ public class ProcedureResourceProvider implements IResourceProvider {
 		return myMapper;
 	}
 
-	private Integer getTotalSize(List<ParameterWrapper> paramList) {
+	private Integer getTotalSize(List<ParameterWrapper> paramList) throws Exception {
 		final Long totalSize;
 		if (paramList.size() == 0) {
 			totalSize = getMyMapper().getSize();
@@ -99,7 +99,7 @@ public class ProcedureResourceProvider implements IResourceProvider {
 	 * "create=type", which adds a new instance of a resource to the server.
 	 */
 	@Create()
-	public MethodOutcome createProcedure(@ResourceParam Procedure theProcedure) {
+	public MethodOutcome createProcedure(@ResourceParam Procedure theProcedure) throws Exception {
 		validateResource(theProcedure);
 
 		Long id = null;
@@ -123,7 +123,7 @@ public class ProcedureResourceProvider implements IResourceProvider {
 	 * @return This method returns a "MethodOutcome"
 	 */
 	@Update()
-	public MethodOutcome updateProcedure(@IdParam IdType theId, @ResourceParam Procedure theProcedure) {
+	public MethodOutcome updateProcedure(@IdParam IdType theId, @ResourceParam Procedure theProcedure) throws Exception {
 		validateResource(theProcedure);
 
 		Long fhirId = null;
@@ -141,7 +141,7 @@ public class ProcedureResourceProvider implements IResourceProvider {
 	}
 
 	@Delete()
-	public void deleteProcedure(@IdParam IdType theId) {
+	public void deleteProcedure(@IdParam IdType theId) throws Exception {
 		if (myMapper.removeByFhirId(theId) <= 0) {
 			throw new ResourceNotFoundException(theId);
 		}
@@ -163,7 +163,7 @@ public class ProcedureResourceProvider implements IResourceProvider {
 	 *         exists.
 	 */
 	@Read()
-	public Procedure readProcedure(@IdParam IdType theId) {
+	public Procedure readProcedure(@IdParam IdType theId) throws Exception {
 		Procedure retval = myMapper.toFHIR(theId);
 		if (retval == null) {
 			throw new ResourceNotFoundException(theId);
@@ -175,7 +175,7 @@ public class ProcedureResourceProvider implements IResourceProvider {
 	@Search()
 	public IBundleProvider findProcedureById(
 			@RequiredParam(name = Procedure.SP_RES_ID) TokenParam theProcedureId, 
-			@IncludeParam(allow = {"Procedure:patient", "Procedure:performer", "Procedure:context" }) final Set<Include> theIncludes) {
+			@IncludeParam(allow = {"Procedure:patient", "Procedure:performer", "Procedure:context" }) final Set<Include> theIncludes) throws Exception {
 		List<ParameterWrapper> paramList = new ArrayList<ParameterWrapper>();
 
 		if (theProcedureId != null) {
@@ -213,7 +213,7 @@ public class ProcedureResourceProvider implements IResourceProvider {
 			@OptionalParam(name = Procedure.SP_PERFORMER) ReferenceParam thePerformerParam,
 
 			@IncludeParam(allow = { "Procedure:patient", "Procedure:performer",
-					"Procedure:context" }) final Set<Include> theIncludes) {
+					"Procedure:context" }) final Set<Include> theIncludes) throws Exception {
 		/*
 		 * Create parameter map, which will be used later to construct
 		 * predicate. The predicate construction should depend on the DB schema.
@@ -299,12 +299,16 @@ public class ProcedureResourceProvider implements IResourceProvider {
 				includes.add("Procedure:context");
 			}
 
-			if (paramList.size() == 0) {
-				myMapper.searchWithoutParams(fromIndex, toIndex, retv, includes, null);
-			} else {
-				myMapper.searchWithParams(fromIndex, toIndex, paramList, retv, includes, null);
+			try {
+				if (paramList.size() == 0) {
+					myMapper.searchWithoutParams(fromIndex, toIndex, retv, includes, null);
+				} else {
+					myMapper.searchWithParams(fromIndex, toIndex, paramList, retv, includes, null);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-
+			
 			return retv;
 		}
 

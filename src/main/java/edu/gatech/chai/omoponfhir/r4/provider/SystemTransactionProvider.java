@@ -55,7 +55,7 @@ public class SystemTransactionProvider {
 	/**
 	 */
 	@Transaction
-	public Bundle transaction(@TransactionParam MyBundle theBundle, HttpServletRequest theRequest) {
+	public Bundle transaction(@TransactionParam MyBundle theBundle, HttpServletRequest theRequest) throws Exception {
 		validateResource(theBundle);
 
 		Bundle retVal = new Bundle();

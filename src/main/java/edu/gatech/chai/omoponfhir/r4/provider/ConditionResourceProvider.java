@@ -89,7 +89,7 @@ public class ConditionResourceProvider implements IResourceProvider {
 		return myMapper;
 	}
 
-	private Integer getTotalSize(List<ParameterWrapper> paramList) {
+	private Integer getTotalSize(List<ParameterWrapper> paramList) throws Exception {
 		final Long totalSize;
 		if (paramList.isEmpty()) {
 			totalSize = getMyMapper().getSize();
@@ -105,7 +105,7 @@ public class ConditionResourceProvider implements IResourceProvider {
 	 * "create=type", which adds a new instance of a resource to the server.
 	 */
 	@Create()
-	public MethodOutcome createCondition(@ResourceParam Condition condition) {
+	public MethodOutcome createCondition(@ResourceParam Condition condition) throws Exception {
 
 		Long id = null;
 		try {
@@ -127,7 +127,7 @@ public class ConditionResourceProvider implements IResourceProvider {
 	}
 
 	@Delete()
-	public void deleteCondition(@IdParam IdType theId) {
+	public void deleteCondition(@IdParam IdType theId) throws Exception {
 		if (myMapper.removeByFhirId(theId) <= 0) {
 			throw new ResourceNotFoundException(theId);
 		}
@@ -145,7 +145,7 @@ public class ConditionResourceProvider implements IResourceProvider {
 	 *         exists.
 	 */
 	@Read()
-	public Condition getResourceById(@IdParam IdType theId) {
+	public Condition getResourceById(@IdParam IdType theId) throws Exception {
 		Condition retVal = (Condition) myMapper.toFHIR(theId);
 		if (retVal == null) {
 			throw new ResourceNotFoundException(theId);
@@ -157,7 +157,7 @@ public class ConditionResourceProvider implements IResourceProvider {
 	@Search()
 	public IBundleProvider findConditionById(
 			@RequiredParam(name = Condition.SP_RES_ID) TokenParam theConditionId
-			) {
+			) throws Exception {
 		List<ParameterWrapper> paramList = new ArrayList<ParameterWrapper>();
 
 		if (theConditionId != null) {
@@ -179,7 +179,7 @@ public class ConditionResourceProvider implements IResourceProvider {
 			@OptionalParam(name = Condition.SP_PATIENT, chainWhitelist={"", Patient.SP_NAME, Patient.SP_IDENTIFIER}) ReferenceParam thePatient,
 			@OptionalParam(name = Condition.SP_SUBJECT, chainWhitelist={"", Patient.SP_NAME, Patient.SP_IDENTIFIER}) ReferenceParam theSubject,
 			@OptionalParam(name = Condition.SP_CATEGORY) TokenOrListParam theOrCategories,
-			@OptionalParam(name = Condition.SP_RECORDED_DATE) DateRangeParam theRecordedDate) {
+			@OptionalParam(name = Condition.SP_RECORDED_DATE) DateRangeParam theRecordedDate) throws Exception {
 		List<ParameterWrapper> paramList = new ArrayList<ParameterWrapper>();
 
 		if (theOrCodes != null) {
@@ -272,7 +272,7 @@ public class ConditionResourceProvider implements IResourceProvider {
 	 *         exists.
 	 */
 	@Read()
-	public Condition readCondition(@IdParam IdType theId) {
+	public Condition readCondition(@IdParam IdType theId) throws Exception {
 		Condition retval = (Condition) myMapper.toFHIR(theId);
 		if (retval == null) {
 			throw new ResourceNotFoundException(theId);
@@ -292,7 +292,7 @@ public class ConditionResourceProvider implements IResourceProvider {
 	 * @return This method returns a "MethodOutcome"
 	 */
 	@Update()
-	public MethodOutcome updateCondition(@IdParam IdType theId, @ResourceParam Condition theCondition) {
+	public MethodOutcome updateCondition(@IdParam IdType theId, @ResourceParam Condition theCondition) throws Exception {
 		validateResource(theCondition);
 
 		Long fhirId = null;
@@ -326,12 +326,16 @@ public class ConditionResourceProvider implements IResourceProvider {
 			// _Include
 			List<String> includes = new ArrayList<String>();
 
-			if (paramList.size() == 0) {
-				myMapper.searchWithoutParams(fromIndex, toIndex, retv, includes, null);
-			} else {
-				myMapper.searchWithParams(fromIndex, toIndex, paramList, retv, includes, null);
+			try {
+				if (paramList.size() == 0) {
+					myMapper.searchWithoutParams(fromIndex, toIndex, retv, includes, null);
+				} else {
+					myMapper.searchWithParams(fromIndex, toIndex, paramList, retv, includes, null);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-
+			
 			return retv;
 		}
 

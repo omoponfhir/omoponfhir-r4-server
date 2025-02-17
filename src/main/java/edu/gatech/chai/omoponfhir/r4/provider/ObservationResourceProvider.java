@@ -86,7 +86,7 @@ public class ObservationResourceProvider implements IResourceProvider {
 		return myMapper;
 	}
 	
-	private Integer getTotalSize(List<ParameterWrapper> paramList) {
+	private Integer getTotalSize(List<ParameterWrapper> paramList) throws Exception {
 		final Long totalSize;
 		if (paramList.isEmpty()) {
 			totalSize = getMyMapper().getSize();
@@ -103,7 +103,7 @@ public class ObservationResourceProvider implements IResourceProvider {
 	 * new instance of a resource to the server.
 	 */
 	@Create()
-	public MethodOutcome createObservation(@ResourceParam Observation theObservation) {
+	public MethodOutcome createObservation(@ResourceParam Observation theObservation) throws Exception {
 		validateResource(theObservation);
 		
 		Long id = null;
@@ -125,7 +125,7 @@ public class ObservationResourceProvider implements IResourceProvider {
 	}
 
 	@Delete()
-	public void deleteObservation(@IdParam IdType theId) {
+	public void deleteObservation(@IdParam IdType theId) throws Exception {
 		if (getMyMapper().removeByFhirId(theId) <= 0) {
 			throw new ResourceNotFoundException(theId);
 		}
@@ -144,7 +144,7 @@ public class ObservationResourceProvider implements IResourceProvider {
 			
 			@IncludeParam(reverse=true)
             final Set<Include> theReverseIncludes
-			) {
+			) throws Exception {
 		List<ParameterWrapper> paramList = new ArrayList<ParameterWrapper> ();
 
 		if (theObservationId != null) {
@@ -176,7 +176,7 @@ public class ObservationResourceProvider implements IResourceProvider {
 			
 			@IncludeParam(reverse=true)
             final Set<Include> theReverseIncludes
-			) {		
+			) throws Exception {		
 		List<ParameterWrapper> paramList = new ArrayList<ParameterWrapper> ();
 
 		if (theOrCodes != null) {
@@ -245,7 +245,7 @@ public class ObservationResourceProvider implements IResourceProvider {
 	 * @return Returns a resource matching this identifier, or null if none exists.
 	 */
 	@Read()
-	public Observation readObservation(@IdParam IdType theId) {
+	public Observation readObservation(@IdParam IdType theId) throws Exception {
 		Observation retval = (Observation) getMyMapper().toFHIR(theId);
 		if (retval == null) {
 			throw new ResourceNotFoundException(theId);
@@ -265,7 +265,7 @@ public class ObservationResourceProvider implements IResourceProvider {
 	 * @return This method returns a "MethodOutcome"
 	 */
 	@Update()
-	public MethodOutcome updateObservation(@IdParam IdType theId, @ResourceParam Observation theObservation) {
+	public MethodOutcome updateObservation(@IdParam IdType theId, @ResourceParam Observation theObservation) throws Exception {
 		validateResource(theObservation);
 		
 		Long fhirId=null;
@@ -366,10 +366,14 @@ public class ObservationResourceProvider implements IResourceProvider {
 				includes.add("Observation:subject");
 			}
 
-			if (paramList.size() == 0) {
-				getMyMapper().searchWithoutParams(fromIndex, toIndex, retv, includes, orderParams);
-			} else {
-				getMyMapper().searchWithParams(fromIndex, toIndex, paramList, retv, includes, orderParams);
+			try {
+				if (paramList.size() == 0) {
+					getMyMapper().searchWithoutParams(fromIndex, toIndex, retv, includes, orderParams);
+				} else {
+					getMyMapper().searchWithParams(fromIndex, toIndex, paramList, retv, includes, orderParams);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 
 			return retv;

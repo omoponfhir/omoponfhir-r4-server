@@ -96,7 +96,7 @@ public class ValueSetResourceProvider implements IResourceProvider {
 		return myMapper;
 	}
 
-    public Integer getTotalSize(List<ParameterWrapper> paramList) {
+    public Integer getTotalSize(List<ParameterWrapper> paramList) throws Exception {
         final Long totalSize;
 		if (paramList.isEmpty()) {
 			totalSize = getMyMapper().getSize();
@@ -112,9 +112,10 @@ public class ValueSetResourceProvider implements IResourceProvider {
 	 * Implements the create operation which adds a new instance of a resource to the server 
 	 * @param valueSet from the UI 
 	 * @return MethodOutcome response from the create operation 
+	 * @throws Exception 
 	 */
-    @Create()
-    public MethodOutcome createValueSet(@ResourceParam ValueSet valueSet) {
+	@Create()
+	public MethodOutcome createValueSet(@ResourceParam ValueSet valueSet) throws Exception {
         validateResource(valueSet); //TODO - determine if we need to validate the resource 
 
         Long id = getMyMapper().toDbase(valueSet, null);
@@ -130,7 +131,7 @@ public class ValueSetResourceProvider implements IResourceProvider {
 
 
 	@Read()
-    public ValueSet readValueSet(@IdParam IdType theId) {
+    public ValueSet readValueSet(@IdParam IdType theId) throws Exception {
         ValueSet retVal = (ValueSet) getMyMapper().toFHIR(theId); 
         if (retVal == null) {
             throw new ResourceNotFoundException(theId);
@@ -141,7 +142,7 @@ public class ValueSetResourceProvider implements IResourceProvider {
 
     @Search()
     public IBundleProvider findValueSetById(
-        @RequiredParam(name = ValueSet.SP_RES_ID) TokenParam theValueSetId) {
+        @RequiredParam(name = ValueSet.SP_RES_ID) TokenParam theValueSetId) throws Exception {
         	
 			List<ParameterWrapper> paramList = new ArrayList<ParameterWrapper>();
             if (theValueSetId != null) {
@@ -173,7 +174,7 @@ public class ValueSetResourceProvider implements IResourceProvider {
             @OptionalParam(name = ValueSet.SP_STATUS) TokenParam theStatus,
             @OptionalParam(name = ValueSet.SP_TITLE) StringParam theTitle,
             @OptionalParam(name = ValueSet.SP_URL) UriParam theUrl,
-            @OptionalParam(name = ValueSet.SP_VERSION) TokenParam theVersion) {
+            @OptionalParam(name = ValueSet.SP_VERSION) TokenParam theVersion) throws Exception {
 		
 		    List<ParameterWrapper> paramList = new ArrayList<ParameterWrapper>();
 
@@ -236,14 +237,9 @@ public class ValueSetResourceProvider implements IResourceProvider {
 
 
     @Update() 
-    public MethodOutcome updateValueSet(@IdParam IdType theId, @ResourceParam ValueSet valueSet) {
+    public MethodOutcome updateValueSet(@IdParam IdType theId, @ResourceParam ValueSet valueSet) throws Exception {
         validateResource(valueSet);
-        Long fhirId = null;
-        try {
-            fhirId = getMyMapper().toDbase(valueSet, theId);
-        } catch (FHIRException e) {
-            e.printStackTrace();
-        }
+        Long fhirId = getMyMapper().toDbase(valueSet, theId);
         if (fhirId == null) {
             throw new ResourceNotFoundException(theId);
         }
@@ -338,10 +334,14 @@ public class ValueSetResourceProvider implements IResourceProvider {
 			List<IBaseResource> retv = new ArrayList<IBaseResource>();
 			List<String> includes = new ArrayList<String>();
 
-			if (paramList.size() == 0) {
-				getMyMapper().searchWithoutParams(fromIndex, toIndex, retv, includes, null);
-			} else {
-				getMyMapper().searchWithParams(fromIndex, toIndex, paramList, retv, includes, null);
+			try {
+				if (paramList.size() == 0) {
+					getMyMapper().searchWithoutParams(fromIndex, toIndex, retv, includes, null);
+				} else {
+					getMyMapper().searchWithParams(fromIndex, toIndex, paramList, retv, includes, null);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 
 			return retv;

@@ -2,6 +2,7 @@ package edu.gatech.chai.omoponfhir.r4.provider;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
@@ -40,28 +41,12 @@ public class ConceptMapResourceProvider implements IResourceProvider {
 	private static final Logger logger = LoggerFactory.getLogger(ConceptMapResourceProvider.class);
 
 	private WebApplicationContext myAppCtx;
-	private String myDbType;
 	private OmopConceptMap myMapper;
-	private int preferredPageSize = 30;
 	private FhirContext fhirContext;
 
 	public ConceptMapResourceProvider() {
 		myAppCtx = ContextLoaderListener.getCurrentWebApplicationContext();
-		myDbType = myAppCtx.getServletContext().getInitParameter("backendDbType");
-		if (myDbType.equalsIgnoreCase("omopv5") == true) {
-			myMapper = new OmopConceptMap(myAppCtx);
-		} else {
-			myMapper = new OmopConceptMap(myAppCtx);
-		}
-
-		String pageSizeStr = myAppCtx.getServletContext().getInitParameter("preferredPageSize");
-		if (pageSizeStr != null && pageSizeStr.isEmpty() == false) {
-			int pageSize = Integer.parseInt(pageSizeStr);
-			if (pageSize > 0) {
-				preferredPageSize = pageSize;
-			}
-		}
-		
+		myMapper = new OmopConceptMap(myAppCtx);
 	}
 
 	@Override
@@ -88,15 +73,15 @@ public class ConceptMapResourceProvider implements IResourceProvider {
 	 */
 	@Operation(name = "$translate", idempotent = true)
 	public Parameters translateOperation(RequestDetails theRequestDetails,
-			@OperationParam(name = "code") CodeType theCode, @OperationParam(name = "system") UriType theSystem,
-			@OperationParam(name = "version") StringType theVersion, @OperationParam(name = "source") UriType theSource,
+			@OperationParam(name = "code") CodeType theCode, 
+			@OperationParam(name = "system") UriType theSystem,
+			@OperationParam(name = "version") StringType theVersion, 
+			@OperationParam(name = "source") UriType theSource,
 			@OperationParam(name = "coding") Coding theCoding,
 			@OperationParam(name = "codeableConcept") CodeableConcept theCodeableConcept,
 			@OperationParam(name = "target") UriType theTarget,
 			@OperationParam(name = "targetsystem") UriType theTargetSystem,
-			@OperationParam(name = "reverse") BooleanType theReverse) {
-
-		Parameters retVal = new Parameters();
+			@OperationParam(name = "reverse") BooleanType theReverse) throws Exception {
 
 		String mappingTerminologyUrl = System.getenv("MAPPING_TERMINOLOGY_URL");
 		if (mappingTerminologyUrl != null && !mappingTerminologyUrl.isEmpty()) {
@@ -174,40 +159,31 @@ public class ConceptMapResourceProvider implements IResourceProvider {
 			targetSystem = theTargetSystem.getValueAsString();
 		}
 
+		List<Coding> codings = new ArrayList<Coding>();
 		if (theCodeableConcept != null && !theCodeableConcept.isEmpty()) {
 			// If codeableconcept exists, use this.
 			// If we have multiple codings, run them until we have a matching
 			// translation.
-			List<Coding> codings = theCodeableConcept.getCoding();
-			for (Coding coding : codings) {
-				String code = coding.getCode();
-				String system = coding.getSystem();
-
-				retVal = myMapper.translateConcept(code, system, targetUri, targetSystem);
-				if (retVal != null && !retVal.isEmpty()) {
-					return retVal;
-				}
-			}
+			codings.addAll(theCodeableConcept.getCoding());
 		}
 
 		if (theCoding != null && !theCoding.isEmpty()) {
-			// if coding is provided, use this.
-			String code = theCoding.getCode();
-			String system = theCoding.getSystem();
+			codings.add(theCoding);
+		}
 
-			retVal = myMapper.translateConcept(code, system, targetUri, targetSystem);
-			if (retVal != null && !retVal.isEmpty()) {
-				return retVal;
+		if ((theCode != null && !theCode.isEmpty()) || (theSystem != null && !theSystem.isEmpty())) {
+			Coding myCoding = new Coding();
+			if (theCode != null) {
+				myCoding.setCode(theCode.getValueAsString());
 			}
+
+			if (theSystem != null) {
+				myCoding.setSystem(theSystem.getValueAsString());
+			}
+
+			codings.add(myCoding);
 		}
 
-		if (theCode != null && !theCode.isEmpty() && theSystem != null && !theSystem.isEmpty()) {
-			String code = theCode.getValueAsString();
-			String system = theSystem.getValueAsString();
-			retVal = myMapper.translateConcept(code, system, targetUri, targetSystem);
-			return retVal;
-		}
-
-		return retVal;
+		return myMapper.translateConcept(codings, targetUri, targetSystem);
 	}
 }

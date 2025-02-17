@@ -110,8 +110,8 @@ public class SMARTonFHIRConformanceStatement {
 		cs
          .getSoftware()
         //  .setName("OMOP v5.3.1 on FHIR R4")
-         .setVersion("v1.6.2")
-         .setReleaseDateElement(new DateTimeType("2024-08-23"));
+         .setVersion("v1.7.0")
+         .setReleaseDateElement(new DateTimeType("2025-02-07"));
 
 		cs.setPublisher("Georgia Tech Research Institute - HEAT");
 
