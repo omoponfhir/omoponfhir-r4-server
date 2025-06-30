@@ -15,40 +15,99 @@
  *******************************************************************************/
 package edu.gatech.chai.omoponfhir.r4.provider;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Bundle.BundleEntryComponent;
+import org.hl7.fhir.r4.model.Bundle.BundleEntryRequestComponent;
+import org.hl7.fhir.r4.model.Bundle.BundleType;
+import org.hl7.fhir.r4.model.Bundle.HTTPVerb;
 import org.hl7.fhir.r4.model.Composition;
+import org.hl7.fhir.r4.model.IdType;
 import org.hl7.fhir.r4.model.Resource;
+import org.hl7.fhir.r4.model.ResourceType;
+import org.apache.commons.lang3.tuple.Pair;
 import org.hl7.fhir.exceptions.FHIRException;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.WebApplicationContext;
 
 import ca.uhn.fhir.rest.annotation.Transaction;
 import ca.uhn.fhir.rest.annotation.TransactionParam;
+import edu.gatech.chai.omoponfhir.omopv5.r4.mapping.BaseOmopResource;
 import edu.gatech.chai.omoponfhir.omopv5.r4.mapping.OmopBundle;
+import edu.gatech.chai.omoponfhir.omopv5.r4.mapping.OmopServerOperations;
+import edu.gatech.chai.omoponfhir.omopv5.r4.mapping.OmopTransaction;
 import edu.gatech.chai.omoponfhir.omopv5.r4.model.MyBundle;
+import edu.gatech.chai.omoponfhir.omopv5.r4.utilities.StaticValues;
 import edu.gatech.chai.omoponfhir.omopv5.r4.utilities.ThrowFHIRExceptions;
+import edu.gatech.chai.omopv5.dba.service.ParameterWrapper;
 import jakarta.servlet.http.HttpServletRequest;
 
 public class SystemTransactionProvider {
 
 	private WebApplicationContext myAppCtx;
 	private String myDbType;
-	private OmopBundle myMapper;
+	private OmopTransaction myMapper;
+	private OmopServerOperations myOperationMapper;
+	private Map<String, Object> supportedProvider = new HashMap<String, Object>();
 
 	public static String getType() {
 		return "Bundle";
 	}
 
+	public void addSupportedProvider(String resourceName, Object resourceMapper) {
+		supportedProvider.put(resourceName, resourceMapper);
+	}
+
 	public SystemTransactionProvider() {
 		myAppCtx = ContextLoaderListener.getCurrentWebApplicationContext();
-		myDbType = myAppCtx.getServletContext().getInitParameter("backendDbType");
-		if (myDbType.equalsIgnoreCase("omopv5") == true) {
-			myMapper = new OmopBundle(myAppCtx);
-		} else {
-			myMapper = new OmopBundle(myAppCtx);
+		myMapper = new OmopTransaction(myAppCtx);
+		myOperationMapper = new OmopServerOperations(myAppCtx);
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public <v extends BaseOmopResource> void undoCreate(List<Object> resourcesAdded) throws Exception {
+		v mapper;
+
+		for (Object entry : resourcesAdded) {
+			Pair<v, Long> entryPair = (Pair<v, Long>) entry;
+			mapper = entryPair.getKey();
+			Long id = entryPair.getValue();
+			mapper.removeDbase(id);
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void addToList(Map<HTTPVerb, Object> transactionEntries, MyBundle theBundle, HTTPVerb verb) {
+		List<Resource> postList = (List<Resource>) transactionEntries.get(HTTPVerb.POST);
+		List<Resource> putList = (List<Resource>) transactionEntries.get(HTTPVerb.PUT);
+		List<String> deleteList = (List<String>) transactionEntries.get(HTTPVerb.DELETE);
+		List<ParameterWrapper> getList = (List<ParameterWrapper>) transactionEntries.get(HTTPVerb.GET);
+
+		List<BundleEntryComponent> entries = theBundle.getEntry();
+
+		BundleEntryComponent entry = null;
+
+		int sizeOfEntries = entries.size();
+		for (int i = 1; i < sizeOfEntries; i++) {
+			entry = entries.get(i);
+			if (verb != null || (entry.getRequest() != null && !entry.getRequest().isEmpty())) {
+				if (verb == HTTPVerb.POST || entry.getRequest().getMethod() == HTTPVerb.POST) {
+					postList.add(entry.getResource());
+				} else if (verb == HTTPVerb.PUT || entry.getRequest().getMethod() == HTTPVerb.PUT) {
+					// This is to update. Get URL
+					String urlString = entry.getRequest().getUrl();
+					IdType idType = new IdType(urlString);
+					// We must be able to get Id as Long as OMOP only handles Long Id.
+					entry.getResource().setId(idType);
+					putList.add(entry.getResource());
+				} else {
+					ThrowFHIRExceptions.unprocessableEntityException("We support POST and PUT for Messages");
+				}
+			}
 		}
 	}
 
@@ -59,7 +118,19 @@ public class SystemTransactionProvider {
 		validateResource(theBundle);
 
 		Bundle retVal = new Bundle();
+		List<Resource> postList = new ArrayList<Resource>();
+		List<Resource> putList = new ArrayList<Resource>();
+		List<String> deleteList = new ArrayList<String>();
+		List<ParameterWrapper> getList = new ArrayList<ParameterWrapper>();
+
+		Map<HTTPVerb, Object> transactionEntries = new HashMap<HTTPVerb, Object>();
+		transactionEntries.put(HTTPVerb.POST, postList);
+		transactionEntries.put(HTTPVerb.PUT, putList);
+		transactionEntries.put(HTTPVerb.DELETE, deleteList);
+		transactionEntries.put(HTTPVerb.GET, getList);
+
 		try {
+			Resource resource;
 			switch (theBundle.getType()) {
 			case DOCUMENT:
 				// https://www.hl7.org/fhir/documents.html#bundle
@@ -71,34 +142,107 @@ public class SystemTransactionProvider {
 				// order, etc. Thus a document signature will very likely be invalid.)
 				
 				List<BundleEntryComponent> entries = theBundle.getEntry();
-				if (!entries.isEmpty()) {
-					BundleEntryComponent entry = entries.get(0);
-					Resource resource = entry.getResource();
+				int index = 0;
+				for (BundleEntryComponent entry: entries) {
+					resource = entry.getResource();
+					
+					// First entry is Composition
+					if (index == 0) {
+						if (resource.getResourceType() == ResourceType.Composition) {
+							// First check the patient 
+							Composition composition = (Composition) resource;
+							
+						} else {
+							// First entry must be Composition resource.
+							ThrowFHIRExceptions
+									.unprocessableEntityException("First entry in "
+											+ "Bundle document type should be Composition");
+						}
+					} else {
+						// 
+					}
+					
+					index++;
+				}
 
-					if (!(resource instanceof Composition)) {
-						ThrowFHIRExceptions.unprocessableEntityException("First entry in " 
-							+ "Bundle document type should be Composition");
+				// if (!entries.isEmpty()) {
+				// 	BundleEntryComponent entry = entries.get(0);
+				// 	Resource resource = entry.getResource();
+
+				// 	if (!(resource instanceof Composition)) {
+				// 		ThrowFHIRExceptions.unprocessableEntityException("First entry in " 
+				// 			+ "Bundle document type should be Composition");
+				// 	}
+				// }
+
+				// myMapper.toDbase(theBundle, null);
+
+				// // theBundle should hae all thre status already been updated with updated resources IDs in entry.
+				// // we should be able to return this bundle as a response.
+				// retVal = theBundle;
+
+				break;
+			// case BATCH:
+				// myMapper.toDbase(theBundle, null);
+				// retVal = theBundle;
+				
+				// break;
+			case COLLECTION:
+				List<BundleEntryComponent> collectionBundleEntries = theBundle.getEntry();
+				List<BundleEntryComponent> responseOperation = myOperationMapper.createEntries(collectionBundleEntries);
+
+				if (responseOperation != null && responseOperation.size() > 0) {
+					retVal.setEntry(responseOperation);
+					retVal.setType(BundleType.COLLECTION);
+				} else {
+					ThrowFHIRExceptions
+							.unprocessableEntityException("Faied process the bundle, " + theBundle.getType().toString());
+				}
+
+				break;
+			case TRANSACTION:
+				System.out.println("We are at the transaction");
+				for (BundleEntryComponent nextEntry : theBundle.getEntry()) {
+					resource = nextEntry.getResource();
+					BundleEntryRequestComponent request = nextEntry.getRequest();
+
+					// We require a transaction to have a request so that we can
+					// handle the transaction. Without it, we have nothing to
+					// do.
+					if (request == null)
+						continue;
+
+					if (!request.isEmpty()) {
+						// First check the Resource to see if we can support
+						// this. resourceName =
+						// resource.getResourceType().toString();
+
+						// Now we have a request that we support. Add this into
+						// the entry to process.
+						HTTPVerb method = request.getMethod();
+						if (method == HTTPVerb.POST) {
+							postList.add(resource);
+						} else if (method == HTTPVerb.PUT) {
+							putList.add(resource);
+						} else if (method == HTTPVerb.DELETE) {
+							deleteList.add(request.getUrl());
+						} else if (method == HTTPVerb.GET) {
+							// TODO: getList.add(new ParameterWrapper());
+							// create parameter here.
+						} else {
+							continue;
+						}
 					}
 				}
 
-				myMapper.toDbase(theBundle, null);
-
-				// theBundle should hae all thre status already been updated with updated resources IDs in entry.
-				// we should be able to return this bundle as a response.
-				retVal = theBundle;
-
-				break;
-			case BATCH:
-				myMapper.toDbase(theBundle, null);
-				retVal = theBundle;
-				
-				break;
-			case TRANSACTION:
-				myMapper.toDbase(theBundle, null);
-
-				// theBundle should hae all thre status already been updated with updated resources IDs in entry.
-				// we should be able to return this bundle as a response.
-				retVal = theBundle;
+				List<BundleEntryComponent> responseTransaction = myMapper.executeRequests(transactionEntries);
+				if (responseTransaction != null && responseTransaction.size() > 0) {
+					retVal.setEntry(responseTransaction);
+					retVal.setType(BundleType.TRANSACTIONRESPONSE);
+				} else {
+					ThrowFHIRExceptions
+							.unprocessableEntityException("Faied process the bundle, " + theBundle.getType().toString());
+				}
 
 				break;
 			case MESSAGE:
@@ -106,9 +250,9 @@ public class SystemTransactionProvider {
 				break;
 			default:
 				ThrowFHIRExceptions.unprocessableEntityException("Unsupported Bundle Type, "
-						+ theBundle.getType().toString() + ". We support DOCUMENT and TRANSACTION");
+						+ theBundle.getType().toString() + ". We support DOCUMENT, TRANSACTION, and MESSAGE");
 			}
-
+			
 		} catch (FHIRException e) {
 			e.printStackTrace();
 			ThrowFHIRExceptions.unprocessableEntityException(e.getMessage());
